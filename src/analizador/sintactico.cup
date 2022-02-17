@@ -1,0 +1,91 @@
+package analizador;
+import java_cup.runtime.*;
+import structs.TErrores;
+import java.util.ArrayList;
+import java.util.List;
+
+parser code 
+{:
+    public List<TErrores> LErrSintact = new ArrayList();
+    
+    /* metodo error sintactico, se puede recuperar. */ 
+    public void syntax_error(Symbol s){ 
+        String lexema = s.value.toString(); 
+        TErrores nwLErrRec = new TErrores(lexema,s.right,s.left,"Error Sintactico","Error sintactico recuperado \"" + lexema+"\" en la linea "+s.right+" y columna "+s.left );
+        LErrSintact.add(nwLErrRec);
+    } 
+
+    /* metodo al que se llama ante algun error sintactico  no es posible una recuperación de errores. */
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
+        TErrores nwLErrIr = new TErrores(lexema,s.right,s.left,"Error Sintactico","Error sintactico\"" + lexema+"\" en la linea "+s.right+" y columna "+s.left );
+        LErrSintact.add(nwLErrIr);
+    }  
+:} 
+
+
+
+
+terminal String CONJ,SEPA,ASIGN,PTCOMA,DDOT,DOT,COMA,LLAVEL,LLAVER,DISYUN,SINTER,MAS,POR,VIRGU;
+terminal String DIGITO,SIGNO,LETRA,ESPE,ID,CADENA;
+non terminal String inicio,bloqueGlobal,bloqueDef,bloqueEvaluar;
+non terminal String expRegulares,conjSimb,defConj,conjUnit,auxconj,expresiones,expresionM;
+
+
+start with inicio; 
+
+
+inicio::=bloqueGlobal;
+
+bloqueGlobal::= LLAVEL bloqueDef SEPA SEPA bloqueEvaluar LLAVER bloqueGlobal
+		|
+		;
+bloqueDef::= defConj expRegulares;
+
+defConj::= CONJ DDOT ID ASIGN conjSimb PTCOMA defConj
+		|
+		;
+conjSimb::= DIGITO VIRGU DIGITO
+		|LETRA VIRGU LETRA
+		|SIGNO VIRGU SIGNO
+		|conjUnit
+		
+		;
+conjUnit::= DIGITO auxconj
+		|  LETRA auxconj
+		|  SIGNO auxconj
+		;
+
+auxconj::= COMA conjUnit
+		| DIGITO
+		| LETRA
+		| SIGNO
+		| ESPE
+                |
+                ;
+		
+
+expRegulares::= ID ASIGN expresiones PTCOMA expRegulares
+		|
+		;
+
+expresiones::= DOT  expresionM 
+		| DISYUN expresionM
+		| MAS expresionM
+		| SINTER expresionM
+		| POR expresionM
+		| expresionM
+		;
+
+expresionM::= ID expresiones
+		|DIGITO expresiones
+		|LETRA expresiones
+		|CADENA expresiones
+		|SIGNO expresiones
+                |ESPE expresiones
+		|LLAVEL ID LLAVER expresiones
+		|
+		;
+		
+bloqueEvaluar::= ID DDOT CADENA PTCOMA bloqueEvaluar
+			|
+			;

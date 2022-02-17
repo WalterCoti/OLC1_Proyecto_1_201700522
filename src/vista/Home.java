@@ -19,9 +19,14 @@ import java.lang.System.Logger.Level;
 import java.util.Scanner;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
+
+
+        
+        
 public class Home extends javax.swing.JFrame {
 
     /**
@@ -31,7 +36,16 @@ public class Home extends javax.swing.JFrame {
     RSyntaxTextArea textArea = new RSyntaxTextArea();
     RTextScrollPane scrpanel = new RTextScrollPane(textArea);
     
+        
     public Home() {
+        try{
+            String ruta  = "src/analizador/";
+            String opcFLex[] = {ruta+"lexico.jflex","-d",ruta};
+            jflex.Main.generate(opcFLex);
+            String opcCup[] = {"-destdir",ruta,"-parser","sintactico",ruta+"sintactico.cup"};
+            java_cup.Main.main(opcCup);
+        } catch(Exception e){
+        }
         initComponents();
         jPcode.add(scrpanel);
     }
@@ -64,6 +78,7 @@ public class Home extends javax.swing.JFrame {
         BtnSaveFile = new javax.swing.JMenuItem();
         BtnSaveAsFile = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        jMenuItem2 = new javax.swing.JMenuItem();
         GenerateJson = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -160,7 +175,11 @@ public class Home extends javax.swing.JFrame {
         jMenu1.add(BtnSaveAsFile);
         jMenu1.add(jSeparator1);
 
-        GenerateJson.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        jMenuItem2.setText("Generar Automata");
+        jMenu1.add(jMenuItem2);
+
+        GenerateJson.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         GenerateJson.setText("Generar JSON ");
         GenerateJson.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -239,13 +258,17 @@ public class Home extends javax.swing.JFrame {
     public String opnFile(){
         String aux="";   
         String text = "";
+        
+       
+        
+        
         try
         {
          JFileChooser jfilech=new JFileChooser();
          jfilech.showOpenDialog(this);
          jfilech.setFileSelectionMode(JFileChooser.FILES_ONLY); //  "Archivos Expresiones", "exp"
-         FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos", "exp");// FileNameExtensionFilter("ARchivos de text0o", "txt");
-         jfilech.setFileFilter(filtro);
+         FileFilter filtro = new FileNameExtensionFilter("Archivos Expresiones", "exp");// FileNameExtensionFilter("ARchivos de text0o", "txt");
+         jfilech.addChoosableFileFilter(filtro);
          
  
          File file=jfilech.getSelectedFile();
@@ -394,6 +417,7 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPcode;
