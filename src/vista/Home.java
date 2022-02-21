@@ -8,6 +8,8 @@ package vista;
  *
  * @author GustavC
  */
+import analizador.Lexico;
+import analizador.sintactico;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,6 +25,8 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
+import control.control;
+import java.io.StringReader;
 
 
         
@@ -38,6 +42,7 @@ public class Home extends javax.swing.JFrame {
     
         
     public Home() {
+        //compilador lexico y sintactico
         try{
             String ruta  = "src/analizador/";
             String opcFLex[] = {ruta+"lexico.jflex","-d",ruta};
@@ -46,6 +51,7 @@ public class Home extends javax.swing.JFrame {
             java_cup.Main.main(opcCup);
         } catch(Exception e){
         }
+        
         initComponents();
         jPcode.add(scrpanel);
     }
@@ -62,8 +68,8 @@ public class Home extends javax.swing.JFrame {
     private void initComponents() {
 
         jPcode = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        BtnGen_Automata = new javax.swing.JButton();
+        BtnAnalisis = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jComboBox1 = new javax.swing.JComboBox<>();
         jPanel4 = new javax.swing.JPanel();
@@ -86,17 +92,17 @@ public class Home extends javax.swing.JFrame {
 
         jPcode.setLayout(new java.awt.CardLayout());
 
-        jButton1.setText("Generar Automata");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        BtnGen_Automata.setText("Generar Automata");
+        BtnGen_Automata.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                BtnGen_AutomataActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Analizar Entradas");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        BtnAnalisis.setText("Analizar Entradas");
+        BtnAnalisis.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                BtnAnalisisActionPerformed(evt);
             }
         });
 
@@ -200,9 +206,9 @@ public class Home extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(35, 35, 35)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(BtnGen_Automata, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(72, 72, 72)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(BtnAnalisis, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(232, 232, 232)
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(120, 120, 120)
@@ -237,9 +243,9 @@ public class Home extends javax.swing.JFrame {
                     .addComponent(jPcode, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
+                    .addComponent(BtnGen_Automata, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
                     .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(BtnAnalisis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -258,17 +264,18 @@ public class Home extends javax.swing.JFrame {
     public String opnFile(){
         String aux="";   
         String text = "";
-        
-       
-        
-        
         try
         {
-         JFileChooser jfilech=new JFileChooser();
+         JFileChooser jfilech=new JFileChooser("D:\\Y_2022\\Primer_Semestre\\Compi1\\LAB\\Proyecto1");
          jfilech.showOpenDialog(this);
+   
+         jfilech.setAcceptAllFileFilterUsed(false);
          jfilech.setFileSelectionMode(JFileChooser.FILES_ONLY); //  "Archivos Expresiones", "exp"
-         FileFilter filtro = new FileNameExtensionFilter("Archivos Expresiones", "exp");// FileNameExtensionFilter("ARchivos de text0o", "txt");
-         jfilech.addChoosableFileFilter(filtro);
+         FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos Expresiones", "exp");// FileNameExtensionFilter("ARchivos de text0o", "txt");
+         
+         jfilech.setFileFilter(filtro);
+        // jfilech.addChoosableFileFilter(filtro);
+         
          
  
          File file=jfilech.getSelectedFile();
@@ -346,13 +353,14 @@ public class Home extends javax.swing.JFrame {
         SaveAsFile();
     }//GEN-LAST:event_BtnSaveAsFileActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void BtnGen_AutomataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnGen_AutomataActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_BtnGen_AutomataActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void BtnAnalisisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnAnalisisActionPerformed
+
+        analizarContent(textArea.getText());
+    }//GEN-LAST:event_BtnAnalisisActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
@@ -403,14 +411,25 @@ public class Home extends javax.swing.JFrame {
             }
         });
     }
+    
+    
+    
+    public void analizarContent(String texto){
+        Lexico nlex = new Lexico(new BufferedReader(new StringReader(textArea.getText())));
+        sintactico sintact_ = new sintactico(nlex);
+        try {
+            sintact_.parse();
+        } catch (Exception e) {
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BtnAnalisis;
+    private javax.swing.JButton BtnGen_Automata;
     private javax.swing.JMenuItem BtnOpenFile;
     private javax.swing.JMenuItem BtnSaveAsFile;
     private javax.swing.JMenuItem BtnSaveFile;
     private javax.swing.JMenuItem GenerateJson;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JComboBox<String> jComboBox1;

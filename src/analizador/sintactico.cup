@@ -11,13 +11,19 @@ parser code
     /* metodo error sintactico, se puede recuperar. */ 
     public void syntax_error(Symbol s){ 
         String lexema = s.value.toString(); 
-        TErrores nwLErrRec = new TErrores(lexema,s.right,s.left,"Error Sintactico","Error sintactico recuperado \"" + lexema+"\" en la linea "+s.right+" y columna "+s.left );
+        int line = s.right;
+        int col = s.left;
+        System.out.println("Error Sintactico: "+lexema+" linea: "+ line + " columna " + col);
+        TErrores nwLErrRec = new TErrores(lexema,line,col,"Error Sintactico","Error sintactico recuperado \"" + lexema+"\" en la linea "+s.right+" y columna "+s.left );
         LErrSintact.add(nwLErrRec);
     } 
 
     /* metodo al que se llama ante algun error sintactico  no es posible una recuperación de errores. */
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
-        TErrores nwLErrIr = new TErrores(lexema,s.right,s.left,"Error Sintactico","Error sintactico\"" + lexema+"\" en la linea "+s.right+" y columna "+s.left );
+        String lexema = s.value.toString(); 
+        int line = s.right;
+        int col = s.left;
+        TErrores nwLErrIr = new TErrores(lexema,line,col,"Error Sintactico","Error sintactico\"" + lexema+"\" en la linea "+line+" y columna "+col );
         LErrSintact.add(nwLErrIr);
     }  
 :} 
@@ -26,7 +32,7 @@ parser code
 
 
 terminal String CONJ,SEPA,ASIGN,PTCOMA,DDOT,DOT,COMA,LLAVEL,LLAVER,DISYUN,SINTER,MAS,POR,VIRGU;
-terminal String DIGITO,SIGNO,LETRA,ESPE,ID,CADENA;
+terminal String NUMB,SIGNO,LETRA,ESPE,ID,CADENA;
 non terminal String inicio,bloqueGlobal,bloqueDef,bloqueEvaluar;
 non terminal String expRegulares,conjSimb,defConj,conjUnit,auxconj,expresiones,expresionM;
 
@@ -44,19 +50,19 @@ bloqueDef::= defConj expRegulares;
 defConj::= CONJ DDOT ID ASIGN conjSimb PTCOMA defConj
 		|
 		;
-conjSimb::= DIGITO VIRGU DIGITO
+conjSimb::= NUMB VIRGU NUMB
 		|LETRA VIRGU LETRA
 		|SIGNO VIRGU SIGNO
 		|conjUnit
 		
 		;
-conjUnit::= DIGITO auxconj
+conjUnit::= NUMB auxconj
 		|  LETRA auxconj
 		|  SIGNO auxconj
 		;
 
 auxconj::= COMA conjUnit
-		| DIGITO
+		| NUMB
 		| LETRA
 		| SIGNO
 		| ESPE
@@ -64,28 +70,29 @@ auxconj::= COMA conjUnit
                 ;
 		
 
-expRegulares::= ID ASIGN expresiones PTCOMA expRegulares
+expRegulares::= ID ASIGN expresiones:a PTCOMA expRegulares 
 		|
 		;
 
 expresiones::= DOT  expresionM 
-		| DISYUN expresionM
-		| MAS expresionM
-		| SINTER expresionM
-		| POR expresionM
-		| expresionM
-		;
+            | MAS expresionM
+            | SINTER expresionM
+            | POR expresionM
+            
+            | expresionM
+            ;
 
 expresionM::= ID expresiones
-		|DIGITO expresiones
-		|LETRA expresiones
-		|CADENA expresiones
-		|SIGNO expresiones
-                |ESPE expresiones
-		|LLAVEL ID LLAVER expresiones
-		|
-		;
+            |NUMB expresiones
+            |LETRA expresiones
+            |CADENA expresiones
+            |SIGNO expresiones
+            |ESPE expresiones
+            |DISYUN expresionM
+            |LLAVEL ID LLAVER expresiones
+            |
+            ;
 		
 bloqueEvaluar::= ID DDOT CADENA PTCOMA bloqueEvaluar
-			|
-			;
+		|
+		;

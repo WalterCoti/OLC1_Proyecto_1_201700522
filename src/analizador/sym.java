@@ -17,10 +17,10 @@ public class sym {
   public static final int SEPA = 3;
   public static final int ID = 20;
   public static final int POR = 14;
+  public static final int NUMB = 16;
   public static final int COMA = 8;
   public static final int EOF = 0;
   public static final int DISYUN = 11;
-  public static final int DIGITO = 16;
   public static final int VIRGU = 15;
   public static final int CONJ = 2;
   public static final int error = 1;
@@ -47,7 +47,7 @@ public class sym {
   "MAS",
   "POR",
   "VIRGU",
-  "DIGITO",
+  "NUMB",
   "SIGNO",
   "LETRA",
   "ESPE",
