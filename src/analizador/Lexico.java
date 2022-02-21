@@ -726,7 +726,7 @@ public class Lexico implements java_cup.runtime.Scanner {
             // fall through
           case 23: break;
           case 2:
-            { System.out.println("Error Lexico: "+yytext()+" linea: "+ yyline + " columna " + yycolumn);
+            { //System.out.println("Error Lexico: "+yytext()+" linea: "+ yyline + " columna " + yycolumn);
     TErrores nwError = new TErrores(yytext(),yyline,yycolumn,"Error Lexico","El simbolo: "+ yytext() +" no pertenece al lenguaje");
     LError.add(nwError);
             }

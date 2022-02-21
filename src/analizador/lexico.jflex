@@ -73,7 +73,7 @@ CADENA = [\"][^\r\n]*[\"]
 
 
 . {
-    System.out.println("Error Lexico: "+yytext()+" linea: "+ yyline + " columna " + yycolumn);
+    //System.out.println("Error Lexico: "+yytext()+" linea: "+ yyline + " columna " + yycolumn);
     TErrores nwError = new TErrores(yytext(),yyline,yycolumn,"Error Lexico","El simbolo: "+ yytext() +" no pertenece al lenguaje");
     LError.add(nwError);
 }
