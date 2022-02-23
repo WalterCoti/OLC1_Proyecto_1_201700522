@@ -24,7 +24,7 @@ parser code
         int line = s.right;
         int col = s.left;
         
-        TErrores nwLErrIr = new TErrores(lexema,line,col,"Error Sintactico","Error sintactico\"" + lexema+"\" en la linea "+line+" y columna "+col );
+        TErrores nwLErrIr = new TErrores(lexema,line,col,"Error Sintactico Irrecuperable","Error sintactico\"" + lexema+"\" en la linea "+line+" y columna "+col );
         LErrSintact.add(nwLErrIr);
     }  
 :} 
@@ -35,9 +35,9 @@ parser code
 terminal String CONJ,SEPA,ASIGN,PTCOMA,DDOT,DOT,COMA,LLAVEL,LLAVER,DISYUN,SINTER,MAS,POR,VIRGU;
 terminal String NUMB,SIGNO,LETRA,ESPE,ID,CADENA;
 non terminal String inicio,bloqueGlobal,bloqueDef,bloqueEvaluar;
-non terminal String expRegulares,conjSimb,defConj,conjUnit,auxconj,expresiones,expresionM;
+non terminal String expRegulares,conjSimb,defConj,conjUnit,expresiones,expresA,expCompl;
 
-precedence left DISYUN,POR,MAS,DOT;
+precedence left MAS,POR,DOT,SINTER,DISYUN;
 
 start with inicio; 
 
@@ -67,38 +67,50 @@ conjUnit::= NUMB:a conjUnit:b                       {: RESULT = a+b; :}
             | COMA:a ESPE:b conjUnit:c              {: RESULT = a+b+c; :}
             |                                       {: RESULT = ""; :}
             ;
-/***
-auxconj::= COMA:a conjUnit:b              {: RESULT = a+b; :}
-            | NUMB:a                      {: RESULT = a; :}
-            | LETRA:a                     {: RESULT = a; :}
-            | SIGNO:a                     {: RESULT = a; :}
-            | ESPE:a                      {: RESULT = a; :}
-            |                             {: RESULT = ""; :}
-            ;
-***/
+
                                            
 expRegulares::= ID:a ASIGN expresiones:b PTCOMA expRegulares {: System.out.println("ID: "+a+" expresion :"+b); :}
 		|                           
 		;
 
-expresiones::= 
-              DOT:a  expresionM:b               {: RESULT = a+b; :}         
-            | MAS:a expresionM:b                {: RESULT = a+b; :}        
-            | SINTER:a expresionM:b             {: RESULT = a+b; :}         
-            | POR:a expresionM:b                {: RESULT = a+b; :}         
-            | expresionM:a                      {: RESULT = a; :}           
-            ;
+expresiones::= DOT:a  expresA:b expresA:c       {: RESULT = a+b+c; :}
+             | DOT:a  expCompl:b expCompl:c     {: RESULT = a+b+c; :}
+             | DOT:a  expresA:b expCompl:c      {: RESULT = a+b+c; :}
+             | DOT:a  expCompl:b expresA:c      {: RESULT = a+b+c; :}
+             | DISYUN:a  expresA:b expresA:c    {: RESULT = a+b+c; :}  
+             | DISYUN:a  expCompl:b expCompl:c  {: RESULT = a+b+c; :}
+             | DISYUN:a  expCompl:b expresA:c   {: RESULT = a+b+c; :}
+             | DISYUN:a  expresA:b expCompl:c   {: RESULT = a+b+c; :}             
+             | POR:a expresA:b                  {: RESULT = a+b; :} 
+             | POR:a expCompl:b                 {: RESULT = a+b; :}
+             | SINTER:a expresA:b               {: RESULT = a+b; :} 
+             | SINTER:a expCompl:b              {: RESULT = a+b; :}        
+             | MAS:a expresA:b                  {: RESULT = a+b; :}         
+             | MAS:a expCompl:b                 {: RESULT = a+b; :}   
+             ;
 
-expresionM::= ID:a expresiones:b                  {: RESULT = a+b; :}          
-            |NUMB:a expresiones:b                 {: RESULT = a+b; :}           
-            |LETRA:a expresiones:b                {: RESULT = a+b; :}          
-            |CADENA:a expresiones:b               {: RESULT = a+b; :}           
-            |SIGNO:a expresiones:b                {: RESULT = a+b; :}           
-            |ESPE:a expresiones:b                 {: RESULT = a+b; :}           
-            |DISYUN:a expresionM:b                {: RESULT = a+b; :}           
-            |LLAVEL:a ID:b LLAVER:c expresiones:d {:  RESULT = a+b+c+d; :}     
-            |                                     {: RESULT = ""; :}            
-            ;
+
+expCompl::=  DOT:a  expresA:b expresA:c       {: RESULT = a+b+c; :}
+           | DOT:a  expCompl:b expCompl:c     {: RESULT = a+b+c; :}
+           | DOT:a  expresA:b expCompl:c      {: RESULT = a+b+c; :}
+           | DOT:a  expCompl:b expresA:c      {: RESULT = a+b+c; :}
+           | DISYUN:a  expresA:b expresA:c    {: RESULT = a+b+c; :}  
+           | DISYUN:a  expCompl:b expCompl:c  {: RESULT = a+b+c; :}
+           | DISYUN:a  expCompl:b expresA:c   {: RESULT = a+b+c; :}
+           | DISYUN:a  expresA:b expCompl:c   {: RESULT = a+b+c; :} 
+           | POR:a expresA:b                  {: RESULT = a+b; :} 
+           | POR:a expCompl:b                 {: RESULT = a+b; :}
+           | SINTER:a expresA:b               {: RESULT = a+b; :} 
+           | SINTER:a expCompl:b              {: RESULT = a+b; :}        
+           | MAS:a expresA:b                  {: RESULT = a+b; :}         
+           | MAS:a expCompl:b                 {: RESULT = a+b; :}   
+           ;
+				
+
+expresA::=   CADENA:a                  {: RESULT = a; :}                          
+           | LLAVEL:a ID:b LLAVER:c    {:  RESULT = a+b+c; :} 
+           ;
+
 		
 bloqueEvaluar::= ID:a DDOT CADENA:b PTCOMA bloqueEvaluar    {: System.out.println("Id: " +a+" Cadena a evaluar: " + b ); :}
 		|

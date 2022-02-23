@@ -259,46 +259,45 @@ public class Home extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
   
-    
-    
-    public String opnFile(){
-        String aux="";   
-        String text = "";
-        try
-        {
-         JFileChooser jfilech=new JFileChooser("D:\\Y_2022\\Primer_Semestre\\Compi1\\LAB\\Proyecto1");
-         jfilech.showOpenDialog(this);
-   
-         jfilech.setAcceptAllFileFilterUsed(false);
-         jfilech.setFileSelectionMode(JFileChooser.FILES_ONLY); //  "Archivos Expresiones", "exp"
-         FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos Expresiones", "exp");// FileNameExtensionFilter("ARchivos de text0o", "txt");
-         
-         jfilech.setFileFilter(filtro);
-        // jfilech.addChoosableFileFilter(filtro);
-         
-         
- 
-         File file=jfilech.getSelectedFile();
-         if(file!=null)
-         {     
-            FileReader archivos=new FileReader(file);
-            pathFile = file.getAbsolutePath();
-            //System.out.println(pathFile);
-            BufferedReader lee=new BufferedReader(archivos);
-            while((aux=lee.readLine())!=null)
-                {
-                   text+= aux+ "\n";
+    private void opnFile()  throws IOException {
+        JFileChooser jfilech = new JFileChooser("D:\\Y_2022\\Primer_Semestre\\Compi1\\LAB\\Proyecto1");
+        jfilech.setFileFilter(new FileNameExtensionFilter("Archivos Expresiones .exp", "exp"));
+        int open = jfilech.showDialog(null, "Open");
+        if (open == JFileChooser.APPROVE_OPTION) {
+            FileReader fileRead = null;
+            BufferedReader bufferRead = null;
+            try {
+                File archivo = jfilech.getSelectedFile();
+                String rut = jfilech.getSelectedFile().getAbsolutePath();
+                if (rut.endsWith(".exp")|| rut.endsWith(".EXP")) {
+                    fileRead = new FileReader(archivo);
+                    bufferRead = new BufferedReader(fileRead);
+                    pathFile = archivo.getAbsolutePath();
+                    String linea;
+                    
+                    while ((linea = bufferRead.readLine()) != null) {
+                        textArea.setText(textArea.getText()+linea+"\n");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Archivo invalido", "Error", JOptionPane.ERROR_MESSAGE);
+                    
                 }
-            lee.close();
-          }    
-         }
-         catch(IOException ex)
-         {
-           JOptionPane.showMessageDialog(null,ex+"" +"\nArchivo no encontrado","ADVERTENCIA!!!",JOptionPane.WARNING_MESSAGE);
-         }
-        
-        return text;//retornar texto de archivo   
+
+            } catch (FileNotFoundException ex) {
+                ex.printStackTrace();
+            } finally {
+                try {
+                    if (null != fileRead) {
+                        fileRead.close();
+                    }
+
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
     }
+
     
     public void SaveAsFile(){
             try
@@ -323,7 +322,12 @@ public class Home extends javax.swing.JFrame {
         
     
     private void BtnOpenFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnOpenFileActionPerformed
-      textArea.setText(opnFile());
+      
+      try {
+            opnFile();
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null,ex+"" +"\nArchivo no encontrado","ADVERTENCIA!!!",JOptionPane.WARNING_MESSAGE);
+        }
     }//GEN-LAST:event_BtnOpenFileActionPerformed
 
     //GUARDAR

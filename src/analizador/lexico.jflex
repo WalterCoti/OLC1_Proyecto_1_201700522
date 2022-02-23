@@ -30,7 +30,7 @@ import java.util.List;
     yychar = 1; 
 %init} 
 /* EXPRESIONES REGULARES */
-COMENTARIOS = ("//".*[^\r\n])|([<!]([^!\>]|[^!]\>|\![^\>])*\!*\!\>)
+COMENTARIOS = ("//".*[^\r\n])|(\<\!([^!\>]|[^!]\>|\![^\>])*\!*\!\>)
 SALTOLINEA = [\r|\n]
 BLANCOS=[ \r\t]+
 NUMERO = [0-9]*
