@@ -241,7 +241,7 @@ public class sintactico extends java_cup.runtime.lr_parser {
     public List<TErrores> LErrSintact = new ArrayList();
     
     /* metodo error sintactico, se puede recuperar. */ 
-    public void syntax_error(Symbol s){ 
+        public void syntax_error(Symbol s){ 
         String lexema = s.value.toString(); 
         int line = s.right;
         int col = s.left;
@@ -561,7 +561,7 @@ class CUP$sintactico$actions {
 		int bleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)).left;
 		int bright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)).right;
 		String b = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)).value;
-		 System.out.println("ID: "+a+" expresion :"+b); 
+		 RESULT = new NHoja(".",".",b,new NHoja("#","h",null,null)); System.out.println("Padre DOT -> Hijoizq:"+b+" Hijoder: #");  
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expRegulares",4, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-4)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -570,7 +570,7 @@ class CUP$sintactico$actions {
           case 20: // expRegulares ::= 
             {
               String RESULT =null;
-
+		 RESULT = ""; 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expRegulares",4, ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -588,7 +588,7 @@ class CUP$sintactico$actions {
 		int cleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int cright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String c = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b+c; 
+		 RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),new NHoja(c,"h",null,null)); System.out.println("Padre DOT -> Hijoizq:"+b+" Hijoder: "+c);
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expresiones",8, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -606,7 +606,7 @@ class CUP$sintactico$actions {
 		int cleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int cright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String c = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b+c; 
+		 RESULT = new NHoja(a,a,b,c); System.out.println("Padre DOT -> Hijoizq:"+b+" Hijoder: "+c); 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expresiones",8, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -624,7 +624,7 @@ class CUP$sintactico$actions {
 		int cleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int cright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String c = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b+c; 
+		 RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),c); System.out.println("Padre DOT -> Hijoizq:"+b+" Hijoder: "+c); 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expresiones",8, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -642,7 +642,7 @@ class CUP$sintactico$actions {
 		int cleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int cright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String c = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b+c; 
+		 RESULT = new NHoja(a,a,b,new NHoja(c,"h",null,null)); System.out.println("Padre DOT -> Hijoizq:"+b+" Hijoder: "+c); 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expresiones",8, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -660,7 +660,7 @@ class CUP$sintactico$actions {
 		int cleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int cright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String c = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b+c; 
+		 RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),new NHoja(c,"h",null,null));  System.out.println("Padre DISYUN -> Hijoizq:"+b+" Hijoder: "+c);
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expresiones",8, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -678,7 +678,7 @@ class CUP$sintactico$actions {
 		int cleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int cright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String c = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b+c; 
+		 RESULT = new NHoja(a,a,b,c); System.out.println("Padre DISYUN -> Hijoizq:"+b+" Hijoder: "+c); 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expresiones",8, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -696,7 +696,7 @@ class CUP$sintactico$actions {
 		int cleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int cright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String c = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b+c; 
+		 RESULT = new NHoja(a,a,b,new NHoja(c,"h",null,null));  System.out.println("Padre DISYUN -> Hijoizq:"+b+" Hijoder: "+c); 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expresiones",8, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -714,7 +714,7 @@ class CUP$sintactico$actions {
 		int cleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int cright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String c = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b+c; 
+		 RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),c); System.out.println("Padre DISYUN -> Hijoizq:"+b+" Hijoder: "+c); 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expresiones",8, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -729,7 +729,7 @@ class CUP$sintactico$actions {
 		int bleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int bright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String b = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b; 
+		 RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),null); System.out.println("Padre POR hijo :"+b); 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expresiones",8, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-1)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -744,7 +744,7 @@ class CUP$sintactico$actions {
 		int bleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int bright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String b = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b; 
+		 RESULT = new NHoja(a,a,b,null); System.out.println("Padre POR hijo :"+a); 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expresiones",8, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-1)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -759,7 +759,7 @@ class CUP$sintactico$actions {
 		int bleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int bright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String b = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b; 
+		 RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),null); System.out.println("Padre SINTER hijo :"+b); 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expresiones",8, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-1)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -774,7 +774,7 @@ class CUP$sintactico$actions {
 		int bleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int bright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String b = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b; 
+		 RESULT = new NHoja(a,a,b,null); System.out.println("Padre SINTER hijo :"+b); 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expresiones",8, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-1)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -789,7 +789,7 @@ class CUP$sintactico$actions {
 		int bleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int bright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String b = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b; 
+		 RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),null); System.out.println("Padre MAS hijo :"+b); 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expresiones",8, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-1)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -804,7 +804,7 @@ class CUP$sintactico$actions {
 		int bleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int bright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String b = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b; 
+		 RESULT = new NHoja(a,a,b,null); System.out.println("Padre MAS hijo :"+b); 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expresiones",8, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-1)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -822,7 +822,7 @@ class CUP$sintactico$actions {
 		int cleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int cright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String c = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b+c; 
+		 RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),new NHoja(c,"h",null,null)); System.out.println("Padre DOT -> Hijoizq:"+b+" Hijoder: "+c);
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expCompl",10, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -840,7 +840,7 @@ class CUP$sintactico$actions {
 		int cleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int cright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String c = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b+c; 
+		 RESULT = new NHoja(a,a,b,c); System.out.println("Padre DOT -> Hijoizq:"+b+" Hijoder: "+c); 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expCompl",10, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -858,7 +858,7 @@ class CUP$sintactico$actions {
 		int cleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int cright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String c = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b+c; 
+		 RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),c); System.out.println("Padre DOT -> Hijoizq:"+b+" Hijoder: "+c); 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expCompl",10, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -876,7 +876,7 @@ class CUP$sintactico$actions {
 		int cleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int cright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String c = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b+c; 
+		 RESULT = new NHoja(a,a,b,new NHoja(c,"h",null,null)); System.out.println("Padre DOT -> Hijoizq:"+b+" Hijoder: "+c); 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expCompl",10, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -894,7 +894,7 @@ class CUP$sintactico$actions {
 		int cleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int cright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String c = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b+c; 
+		 RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),new NHoja(c,"h",null,null));  System.out.println("Padre DISYUN -> Hijoizq:"+b+" Hijoder: "+c);
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expCompl",10, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -912,7 +912,7 @@ class CUP$sintactico$actions {
 		int cleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int cright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String c = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b+c; 
+		 RESULT = new NHoja(a,a,b,c); System.out.println("Padre DISYUN -> Hijoizq:"+b+" Hijoder: "+c); 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expCompl",10, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -930,7 +930,7 @@ class CUP$sintactico$actions {
 		int cleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int cright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String c = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b+c; 
+		 RESULT = new NHoja(a,a,b,new NHoja(c,"h",null,null));  System.out.println("Padre DISYUN -> Hijoizq:"+b+" Hijoder: "+c); 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expCompl",10, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -948,7 +948,7 @@ class CUP$sintactico$actions {
 		int cleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int cright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String c = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b+c; 
+		 RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),c); System.out.println("Padre DISYUN -> Hijoizq:"+b+" Hijoder: "+c); 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expCompl",10, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -963,7 +963,7 @@ class CUP$sintactico$actions {
 		int bleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int bright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String b = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b; 
+		 RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),null); System.out.println("Padre POR hijo :"+b); 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expCompl",10, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-1)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -978,7 +978,7 @@ class CUP$sintactico$actions {
 		int bleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int bright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String b = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b; 
+		 RESULT = new NHoja(a,a,b,null); System.out.println("Padre POR hijo :"+a); 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expCompl",10, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-1)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -993,7 +993,7 @@ class CUP$sintactico$actions {
 		int bleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int bright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String b = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b; 
+		 RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),null); System.out.println("Padre SINTER hijo :"+b); 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expCompl",10, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-1)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -1008,7 +1008,7 @@ class CUP$sintactico$actions {
 		int bleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int bright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String b = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b; 
+		 RESULT = new NHoja(a,a,b,null); System.out.println("Padre SINTER hijo :"+b); 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expCompl",10, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-1)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -1023,7 +1023,7 @@ class CUP$sintactico$actions {
 		int bleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int bright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String b = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b; 
+		 RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),null); System.out.println("Padre MAS hijo :"+b); 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expCompl",10, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-1)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -1038,7 +1038,7 @@ class CUP$sintactico$actions {
 		int bleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int bright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String b = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a+b; 
+		 RESULT = new NHoja(a,a,b,null); System.out.println("Padre MAS hijo :"+b); 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expCompl",10, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-1)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -1050,7 +1050,7 @@ class CUP$sintactico$actions {
 		int aleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int aright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String a = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		 RESULT = a; 
+		 RESULT = a; System.out.println(a); 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expresA",9, ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -1068,7 +1068,7 @@ class CUP$sintactico$actions {
 		int cleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int cright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String c = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		  RESULT = a+b+c; 
+		  RESULT = b;System.out.println(b); 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expresA",9, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;

@@ -9,7 +9,7 @@ parser code
     public List<TErrores> LErrSintact = new ArrayList();
     
     /* metodo error sintactico, se puede recuperar. */ 
-    public void syntax_error(Symbol s){ 
+        public void syntax_error(Symbol s){ 
         String lexema = s.value.toString(); 
         int line = s.right;
         int col = s.left;
@@ -69,46 +69,46 @@ conjUnit::= NUMB:a conjUnit:b                       {: RESULT = a+b; :}
             ;
 
                                            
-expRegulares::= ID:a ASIGN expresiones:b PTCOMA expRegulares {: System.out.println("ID: "+a+" expresion :"+b); :}
-		|                           
+expRegulares::= ID:a ASIGN expresiones:b PTCOMA expRegulares {: RESULT = new NHoja(".",".",b,new NHoja("#","h",null,null)); System.out.println("Padre DOT -> Hijoizq:"+b+" Hijoder: #");  :}
+		|                                           {: RESULT = ""; :}         
 		;
+               
+expresiones::= DOT:a  expresA:b expresA:c     {: RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),new NHoja(c,"h",null,null)); System.out.println("Padre DOT -> Hijoizq:"+b+" Hijoder: "+c);:}
+           | DOT:a  expCompl:b expCompl:c     {: RESULT = new NHoja(a,a,b,c); System.out.println("Padre DOT -> Hijoizq:"+b+" Hijoder: "+c); :}
+           | DOT:a  expresA:b expCompl:c      {: RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),c); System.out.println("Padre DOT -> Hijoizq:"+b+" Hijoder: "+c); :}
+           | DOT:a  expCompl:b expresA:c      {: RESULT = new NHoja(a,a,b,new NHoja(c,"h",null,null)); System.out.println("Padre DOT -> Hijoizq:"+b+" Hijoder: "+c); :}
+           | DISYUN:a  expresA:b expresA:c    {: RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),new NHoja(c,"h",null,null));  System.out.println("Padre DISYUN -> Hijoizq:"+b+" Hijoder: "+c);:}  
+           | DISYUN:a  expCompl:b expCompl:c  {: RESULT = new NHoja(a,a,b,c); System.out.println("Padre DISYUN -> Hijoizq:"+b+" Hijoder: "+c); :}
+           | DISYUN:a  expCompl:b expresA:c   {: RESULT = new NHoja(a,a,b,new NHoja(c,"h",null,null));  System.out.println("Padre DISYUN -> Hijoizq:"+b+" Hijoder: "+c); :}
+           | DISYUN:a  expresA:b expCompl:c   {: RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),c); System.out.println("Padre DISYUN -> Hijoizq:"+b+" Hijoder: "+c); :} 
+           | POR:a expresA:b                  {: RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),null); System.out.println("Padre POR hijo :"+b); :} 
+           | POR:a expCompl:b                 {: RESULT = new NHoja(a,a,b,null); System.out.println("Padre POR hijo :"+a); :}
+           | SINTER:a expresA:b               {: RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),null); System.out.println("Padre SINTER hijo :"+b); :} 
+           | SINTER:a expCompl:b              {: RESULT = new NHoja(a,a,b,null); System.out.println("Padre SINTER hijo :"+b); :}        
+           | MAS:a expresA:b                  {: RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),null); System.out.println("Padre MAS hijo :"+b); :}         
+           | MAS:a expCompl:b                 {: RESULT = new NHoja(a,a,b,null); System.out.println("Padre MAS hijo :"+b); :}   
+           ;
 
-expresiones::= DOT:a  expresA:b expresA:c       {: RESULT = a+b+c; :}
-             | DOT:a  expCompl:b expCompl:c     {: RESULT = a+b+c; :}
-             | DOT:a  expresA:b expCompl:c      {: RESULT = a+b+c; :}
-             | DOT:a  expCompl:b expresA:c      {: RESULT = a+b+c; :}
-             | DISYUN:a  expresA:b expresA:c    {: RESULT = a+b+c; :}  
-             | DISYUN:a  expCompl:b expCompl:c  {: RESULT = a+b+c; :}
-             | DISYUN:a  expCompl:b expresA:c   {: RESULT = a+b+c; :}
-             | DISYUN:a  expresA:b expCompl:c   {: RESULT = a+b+c; :}             
-             | POR:a expresA:b                  {: RESULT = a+b; :} 
-             | POR:a expCompl:b                 {: RESULT = a+b; :}
-             | SINTER:a expresA:b               {: RESULT = a+b; :} 
-             | SINTER:a expCompl:b              {: RESULT = a+b; :}        
-             | MAS:a expresA:b                  {: RESULT = a+b; :}         
-             | MAS:a expCompl:b                 {: RESULT = a+b; :}   
-             ;
-
-
-expCompl::=  DOT:a  expresA:b expresA:c       {: RESULT = a+b+c; :}
-           | DOT:a  expCompl:b expCompl:c     {: RESULT = a+b+c; :}
-           | DOT:a  expresA:b expCompl:c      {: RESULT = a+b+c; :}
-           | DOT:a  expCompl:b expresA:c      {: RESULT = a+b+c; :}
-           | DISYUN:a  expresA:b expresA:c    {: RESULT = a+b+c; :}  
-           | DISYUN:a  expCompl:b expCompl:c  {: RESULT = a+b+c; :}
-           | DISYUN:a  expCompl:b expresA:c   {: RESULT = a+b+c; :}
-           | DISYUN:a  expresA:b expCompl:c   {: RESULT = a+b+c; :} 
-           | POR:a expresA:b                  {: RESULT = a+b; :} 
-           | POR:a expCompl:b                 {: RESULT = a+b; :}
-           | SINTER:a expresA:b               {: RESULT = a+b; :} 
-           | SINTER:a expCompl:b              {: RESULT = a+b; :}        
-           | MAS:a expresA:b                  {: RESULT = a+b; :}         
-           | MAS:a expCompl:b                 {: RESULT = a+b; :}   
+            //NHoja(String valor_,String tipo_,NHoja HojaR_,NHoja HojaL_)
+expCompl::=  DOT:a  expresA:b expresA:c       {: RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),new NHoja(c,"h",null,null)); System.out.println("Padre DOT -> Hijoizq:"+b+" Hijoder: "+c);:}
+           | DOT:a  expCompl:b expCompl:c     {: RESULT = new NHoja(a,a,b,c); System.out.println("Padre DOT -> Hijoizq:"+b+" Hijoder: "+c); :}
+           | DOT:a  expresA:b expCompl:c      {: RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),c); System.out.println("Padre DOT -> Hijoizq:"+b+" Hijoder: "+c); :}
+           | DOT:a  expCompl:b expresA:c      {: RESULT = new NHoja(a,a,b,new NHoja(c,"h",null,null)); System.out.println("Padre DOT -> Hijoizq:"+b+" Hijoder: "+c); :}
+           | DISYUN:a  expresA:b expresA:c    {: RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),new NHoja(c,"h",null,null));  System.out.println("Padre DISYUN -> Hijoizq:"+b+" Hijoder: "+c);:}  
+           | DISYUN:a  expCompl:b expCompl:c  {: RESULT = new NHoja(a,a,b,c); System.out.println("Padre DISYUN -> Hijoizq:"+b+" Hijoder: "+c); :}
+           | DISYUN:a  expCompl:b expresA:c   {: RESULT = new NHoja(a,a,b,new NHoja(c,"h",null,null));  System.out.println("Padre DISYUN -> Hijoizq:"+b+" Hijoder: "+c); :}
+           | DISYUN:a  expresA:b expCompl:c   {: RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),c); System.out.println("Padre DISYUN -> Hijoizq:"+b+" Hijoder: "+c); :} 
+           | POR:a expresA:b                  {: RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),null); System.out.println("Padre POR hijo :"+b); :} 
+           | POR:a expCompl:b                 {: RESULT = new NHoja(a,a,b,null); System.out.println("Padre POR hijo :"+a); :}
+           | SINTER:a expresA:b               {: RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),null); System.out.println("Padre SINTER hijo :"+b); :} 
+           | SINTER:a expCompl:b              {: RESULT = new NHoja(a,a,b,null); System.out.println("Padre SINTER hijo :"+b); :}        
+           | MAS:a expresA:b                  {: RESULT = new NHoja(a,a,new NHoja(b,"h",null,null),null); System.out.println("Padre MAS hijo :"+b); :}         
+           | MAS:a expCompl:b                 {: RESULT = new NHoja(a,a,b,null); System.out.println("Padre MAS hijo :"+b); :}   
            ;
 				
 
-expresA::=   CADENA:a                  {: RESULT = a; :}                          
-           | LLAVEL:a ID:b LLAVER:c    {:  RESULT = a+b+c; :} 
+expresA::=   CADENA:a                  {: RESULT = a; System.out.println(a); :}                          
+           | LLAVEL:a ID:b LLAVER:c    {:  RESULT = b;System.out.println(b); :} 
            ;
 
 		
