@@ -105,11 +105,11 @@ public class Lexico implements java_cup.runtime.Scanner {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\1\1\1\2\2\3\3\4\1\5\1\6\1\7\1\4"+
-    "\1\10\1\4\1\1\1\11\1\12\1\4\1\13\2\14"+
-    "\1\4\1\15\1\16\1\17\1\20\1\0\1\21\1\22"+
-    "\1\23\2\0\2\24\1\25\1\3\3\0\1\24\1\0"+
-    "\1\26\1\3";
+    "\1\0\1\1\2\2\3\3\1\4\1\5\1\6\1\3"+
+    "\1\7\1\3\1\10\1\11\1\12\1\3\1\13\2\14"+
+    "\1\3\1\15\1\16\1\17\1\20\1\0\1\21\1\22"+
+    "\1\23\2\0\2\24\1\25\1\2\3\0\1\24\1\0"+
+    "\1\26\1\2";
 
   private static int [] zzUnpackAction() {
     int [] result = new int[42];
@@ -228,7 +228,7 @@ public class Lexico implements java_cup.runtime.Scanner {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\1\1\1\11\1\1\2\11\2\1\3\11\1\1\1\11"+
+    "\1\0\1\11\1\1\2\11\2\1\3\11\1\1\1\11"+
     "\2\1\2\11\1\1\1\11\3\1\4\11\1\0\1\1"+
     "\2\11\2\0\2\1\1\11\1\1\3\0\1\1\1\0"+
     "\2\1";
@@ -723,114 +723,114 @@ public class Lexico implements java_cup.runtime.Scanner {
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1:
-            { System.out.println("Lexico "+yytext()+" NUMB"); return new Symbol(sym.NUMB,yycolumn,yyline, yytext());
-            }
-            // fall through
-          case 23: break;
-          case 2:
-            { //System.out.println("Error Lexico: "+yytext()+" linea: "+ yyline + " columna " + yycolumn);
+            { System.out.println("Error Lexico: "+yytext()+" linea: "+ yyline + " columna " + yycolumn);
     TErrores nwError = new TErrores(yytext(),yyline,yycolumn,"Error Lexico","El simbolo: "+ yytext() +" no pertenece al lenguaje");
     LError.add(nwError);
             }
             // fall through
+          case 23: break;
+          case 2:
+            { 
+            }
+            // fall through
           case 24: break;
           case 3:
-            { 
+            { /*System.out.println("Lexico "+yytext()+" SIGNO");*/ return new Symbol(sym.SIGNO,yycolumn,yyline, yytext());
             }
             // fall through
           case 25: break;
           case 4:
-            { System.out.println("Lexico "+yytext()+" SIGNO"); return new Symbol(sym.SIGNO,yycolumn,yyline, yytext());
+            { /*System.out.println("Lexico "+yytext()+" POR");*/ return new Symbol(sym.POR,yycolumn,yyline, yytext());
             }
             // fall through
           case 26: break;
           case 5:
-            { System.out.println("Lexico "+yytext()+" POR"); return new Symbol(sym.POR,yycolumn,yyline, yytext());
+            { /*System.out.println("Lexico "+yytext()+" MAS");*/ return new Symbol(sym.MAS,yycolumn,yyline, yytext());
             }
             // fall through
           case 27: break;
           case 6:
-            { System.out.println("Lexico "+yytext()+" MAS"); return new Symbol(sym.MAS,yycolumn,yyline, yytext());
+            { /*System.out.println("Lexico "+yytext()+" COMA");*/ return new Symbol(sym.COMA,yycolumn,yyline, yytext());
             }
             // fall through
           case 28: break;
           case 7:
-            { System.out.println("Lexico "+yytext()+" COMA"); return new Symbol(sym.COMA,yycolumn,yyline, yytext());
+            { /*System.out.println("Lexico "+yytext()+" DOT");*/ return new Symbol(sym.DOT,yycolumn,yyline, yytext());
             }
             // fall through
           case 29: break;
           case 8:
-            { System.out.println("Lexico "+yytext()+" DOT"); return new Symbol(sym.DOT,yycolumn,yyline, yytext());
+            { /*System.out.println("Lexico "+yytext()+" NUMERO");*/ return new Symbol(sym.NUMB,yycolumn,yyline, yytext());
             }
             // fall through
           case 30: break;
           case 9:
-            { System.out.println("Lexico "+yytext()+" DDOT"); return new Symbol(sym.DDOT,yycolumn,yyline, yytext());
+            { /*System.out.println("Lexico "+yytext()+" DDOT");*/ return new Symbol(sym.DDOT,yycolumn,yyline, yytext());
             }
             // fall through
           case 31: break;
           case 10:
-            { System.out.println("Lexico "+yytext()+" PTCOMA"); return new Symbol(sym.PTCOMA,yycolumn,yyline, yytext());
+            { /*System.out.println("Lexico "+yytext()+" PTCOMA");*/ return new Symbol(sym.PTCOMA,yycolumn,yyline, yytext());
             }
             // fall through
           case 32: break;
           case 11:
-            { System.out.println("Lexico "+yytext()+" SINTER"); return new Symbol(sym.SINTER,yycolumn,yyline, yytext());
+            { /*System.out.println("Lexico "+yytext()+" SINTER");*/ return new Symbol(sym.SINTER,yycolumn,yyline, yytext());
             }
             // fall through
           case 33: break;
           case 12:
-            { System.out.println("Lexico "+yytext()+" LETRA"); return new Symbol(sym.LETRA,yycolumn,yyline, yytext());
+            { /*System.out.println("Lexico "+yytext()+" LETRA");*/ return new Symbol(sym.LETRA,yycolumn,yyline, yytext());
             }
             // fall through
           case 34: break;
           case 13:
-            { System.out.println("Lexico "+yytext()+" LLAVEL"); return new Symbol(sym.LLAVEL,yycolumn,yyline, yytext());
+            { /*System.out.println("Lexico "+yytext()+" LLAVEL");*/ return new Symbol(sym.LLAVEL,yycolumn,yyline, yytext());
             }
             // fall through
           case 35: break;
           case 14:
-            { System.out.println("Lexico "+yytext()+" DISYUN"); return new Symbol(sym.DISYUN,yycolumn,yyline, yytext());
+            { /*System.out.println("Lexico "+yytext()+" DISYUN");*/ return new Symbol(sym.DISYUN,yycolumn,yyline, yytext());
             }
             // fall through
           case 36: break;
           case 15:
-            { System.out.println("Lexico "+yytext()+" LLAVER"); return new Symbol(sym.LLAVER,yycolumn,yyline, yytext());
+            { /*System.out.println("Lexico "+yytext()+" LLAVER");*/ return new Symbol(sym.LLAVER,yycolumn,yyline, yytext());
             }
             // fall through
           case 37: break;
           case 16:
-            { System.out.println("Lexico "+yytext()+" VIRGU"); return new Symbol(sym.VIRGU,yycolumn,yyline, yytext());
+            { /*System.out.println("Lexico "+yytext()+" VIRGU");*/ return new Symbol(sym.VIRGU,yycolumn,yyline, yytext());
             }
             // fall through
           case 38: break;
           case 17:
-            { System.out.println("Lexico "+yytext()+" CADENA"); return new Symbol(sym.CADENA,yycolumn,yyline, yytext());
+            { /*System.out.println("Lexico "+yytext()+" CADENA");*/ return new Symbol(sym.CADENA,yycolumn,yyline, yytext());
             }
             // fall through
           case 39: break;
           case 18:
-            { System.out.println("Lexico "+yytext()+" SEPA");return new Symbol(sym.SEPA,yycolumn,yyline, yytext());
+            { /*System.out.println("Lexico "+yytext()+" SEPA");*/ return new Symbol(sym.SEPA,yycolumn,yyline, yytext());
             }
             // fall through
           case 40: break;
           case 19:
-            { System.out.println("Lexico "+yytext()+" ASIGN"); return new Symbol(sym.ASIGN,yycolumn,yyline, yytext());
+            { /*System.out.println("Lexico "+yytext()+" ASIGN");*/ return new Symbol(sym.ASIGN,yycolumn,yyline, yytext());
             }
             // fall through
           case 41: break;
           case 20:
-            { System.out.println("Lexico "+yytext()+" ID"); return new Symbol(sym.ID,yycolumn,yyline, yytext());
+            { /*System.out.println("Lexico "+yytext()+" ID");*/ return new Symbol(sym.ID,yycolumn,yyline, yytext());
             }
             // fall through
           case 42: break;
           case 21:
-            { System.out.println("Lexico "+yytext()+" ESPE"); return new Symbol(sym.ESPE,yycolumn,yyline, yytext());
+            { /*System.out.println("Lexico "+yytext()+" ESPE");*/ return new Symbol(sym.ESPE,yycolumn,yyline, yytext());
             }
             // fall through
           case 43: break;
           case 22:
-            { System.out.println("Lexico "+yytext()+" CONJ"); return new Symbol(sym.CONJ,yycolumn,yyline, yytext());
+            { /*System.out.println("Lexico "+yytext()+" CONJ");*/ return new Symbol(sym.CONJ,yycolumn,yyline, yytext());
             }
             // fall through
           case 44: break;

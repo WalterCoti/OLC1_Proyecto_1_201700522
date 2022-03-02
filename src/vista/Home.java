@@ -26,7 +26,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import control.control;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.StringReader;
+import javax.swing.SwingUtilities;
 
 
         
@@ -54,6 +58,8 @@ public class Home extends javax.swing.JFrame {
         
         initComponents();
         jPcode.add(scrpanel);
+        redirectSystemStreams(); //Capturar lo que se imprima en consola
+        
     }
 
    
@@ -75,8 +81,8 @@ public class Home extends javax.swing.JFrame {
         jPanel4 = new javax.swing.JPanel();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jtxtConsola = new javax.swing.JTextPane();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        Consola = new javax.swing.JTextArea();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -139,8 +145,10 @@ public class Home extends javax.swing.JFrame {
 
         jButton4.setText("Siguiente");
 
-        jtxtConsola.setEditable(false);
-        jScrollPane1.setViewportView(jtxtConsola);
+        Consola.setEditable(false);
+        Consola.setColumns(20);
+        Consola.setRows(5);
+        jScrollPane2.setViewportView(Consola);
 
         jMenu1.setText("Archivo");
 
@@ -215,13 +223,10 @@ public class Home extends javax.swing.JFrame {
                         .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jScrollPane1))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addGap(20, 20, 20)
-                                .addComponent(jPcode, javax.swing.GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE)))
+                        .addGap(20, 20, 20)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPcode, javax.swing.GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE)
+                            .addComponent(jScrollPane2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -248,17 +253,49 @@ public class Home extends javax.swing.JFrame {
                     .addComponent(BtnAnalisis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 21, Short.MAX_VALUE)))
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-  
+    
+   
+     
+ /*---------------------- https://billwaa.wordpress.com/2011/11/14/java-gui-console-output/ ----------------------*/
+  private void updateTextArea(final String text) {
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        Consola.append(text);
+      }
+    });
+  }
+
+  private void redirectSystemStreams() {
+    OutputStream out = new OutputStream() {
+      @Override
+      public void write(int b) throws IOException {
+        updateTextArea(String.valueOf((char) b));
+      }
+ 
+      @Override
+      public void write(byte[] b, int off, int len) throws IOException {
+        updateTextArea(new String(b, off, len));
+      }
+ 
+      @Override
+      public void write(byte[] b) throws IOException {
+        write(b, 0, b.length);
+      }
+    };
+ 
+    System.setOut(new PrintStream(out, true));
+    System.setErr(new PrintStream(out, true));
+  }
+    /*---------------------- https://billwaa.wordpress.com/2011/11/14/java-gui-console-output/ ----------------------*/
+    
     private void opnFile()  throws IOException {
         JFileChooser jfilech = new JFileChooser("D:\\Y_2022\\Primer_Semestre\\Compi1\\LAB\\Proyecto1");
         jfilech.setFileFilter(new FileNameExtensionFilter("Archivos Expresiones .exp", "exp"));
@@ -339,7 +376,7 @@ public class Home extends javax.swing.JFrame {
             FileWriter  save = new FileWriter(tmpfile);
             save.write(textArea.getText());
             save.close();
-            System.out.println("Archivo Existente");            
+            System.out.println("Cambios Guardados");            
         }else{
             SaveAsFile();
         }
@@ -420,10 +457,14 @@ public class Home extends javax.swing.JFrame {
     
     public void analizarContent(String texto){
         Lexico nlex = new Lexico(new BufferedReader(new StringReader(textArea.getText())));
+        System.err.println("Analisis Lexico Finalizado");
         sintactico sintact_ = new sintactico(nlex);
+       
         try {
             sintact_.parse();
+            System.out.println("Analisis Sintactico Finalizado");
         } catch (Exception e) {
+            System.out.println("Error Sintactico detectado");
         }
     }
 
@@ -433,6 +474,7 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JMenuItem BtnOpenFile;
     private javax.swing.JMenuItem BtnSaveAsFile;
     private javax.swing.JMenuItem BtnSaveFile;
+    private javax.swing.JTextArea Consola;
     private javax.swing.JMenuItem GenerateJson;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
@@ -444,8 +486,7 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPcode;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPopupMenu.Separator jSeparator1;
-    private javax.swing.JTextPane jtxtConsola;
     // End of variables declaration//GEN-END:variables
 }
