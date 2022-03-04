@@ -8,8 +8,8 @@ import structs.Conjunto;
 
 parser code 
 {:
-    public List<TErrores> LErrSintact = new ArrayList();
-    public List<Conjunto> LConj= new ArrayList();
+    public List<TErrores> LErrSintact = new ArrayList<TErrores>();
+    public List<Conjunto> LConj= new ArrayList<Conjunto>();
     
     /* metodo error sintactico, se puede recuperar. */ 
         public void syntax_error(Symbol s){ 
@@ -26,17 +26,13 @@ parser code
         String lexema = s.value.toString(); 
         int line = s.right;
         int col = s.left;
-        
         TErrores nwLErrIr = new TErrores(lexema,line,col,"Error Sintactico Irrecuperable","Error sintactico\"" + lexema+"\" en la linea "+line+" y columna "+col );
         LErrSintact.add(nwLErrIr);
     }  
 :} 
 
-
-
-
 terminal String CONJ,SEPA,ASIGN,PTCOMA,DDOT,DOT,COMA,LLAVEL,LLAVER,DISYUN,SINTER,MAS,POR,VIRGU;
-terminal String NUMB,SIGNO,LETRA,ESPE,ID,CADENA;
+terminal String NUMB,SIGNO,LETRA,ESPE,ID,CADENA,ESPECIAL;
 non terminal String inicio,bloqueGlobal,bloqueDef,bloqueEvaluar;
 non terminal String expRegulares,conjSimb,defConj,conjUnit,expresA;
 non terminal NHoja expresiones,expCompl;
@@ -55,23 +51,25 @@ bloqueDef::= defConj expRegulares;
 
 defConj::=  CONJ DDOT ID:a ASIGN conjSimb:b PTCOMA defConj  {: boolean exist=false; 
                                                                 for(int i=0;i<LConj.size();i++){
-                                                                   if(LConj.get(i).getNameConj() == a){
+                                                                   // System.out.println(LConj.get(i).getNameConj()+"<-");
+                                                                   if(a.equals(LConj.get(i).getNameConj())){
                                                                         exist=true;
                                                                         break;
                                                                    }
                                                                 }
                                                                 if(exist){
-                                                                
+                                                                    System.out.println("Error el conjunto: >" + a + "< ya existe, intente cambiar el nombre");
                                                                 }else{
                                                                     LConj.add(new Conjunto(a,b));
+                                                                    System.out.println("Conjunto: >" + a + "< guardado");
                                                                 };
 
 :}
             |
             ;
-conjSimb::= NUMB:a VIRGU:b NUMB:c             {: RESULT = a+b+c; System.out.println("Sintactico xD: "+a+b+c); :}
-            |LETRA:a VIRGU:b LETRA:c          {: RESULT = a+b+c; System.out.println("Sintactico xD: "+a+b+c); :}
-            |SIGNO:a VIRGU:b SIGNO:c          {: RESULT = a+b+c; System.out.println("Sintactico xD: "+a+b+c); :}
+conjSimb::= NUMB:a VIRGU:b NUMB:c             {: RESULT = a+b+c; /*System.out.println("Sintactico xD: "+a+b+c);*/ :}
+            |LETRA:a VIRGU:b LETRA:c          {: RESULT = a+b+c; /*System.out.println("Sintactico xD: "+a+b+c);*/ :}
+            |SIGNO:a VIRGU:b SIGNO:c          {: RESULT = a+b+c; /*System.out.println("Sintactico xD: "+a+b+c);*/ :}
             |conjUnit:a                       {: RESULT = a;:}
             ;
 
@@ -82,28 +80,29 @@ conjUnit::= NUMB:a conjUnit:b                       {: RESULT = a+b; :}
             | COMA:a LETRA:b conjUnit:c             {: RESULT = a+b+c; :}
             | COMA:a SIGNO:b conjUnit:c             {: RESULT = a+b+c; :}
             | COMA:a ESPE:b conjUnit:c              {: RESULT = a+b+c; :}
-            |                                       {: RESULT = ""; :}
+            |                                        {: RESULT = null; :}
             ;
 
                                            
-expRegulares::= ID:a ASIGN expresiones:b PTCOMA expRegulares {:/* RESULT = new NHoja(".",".",b,new NHoja("#","h",null,null));*/ System.out.println("lLEGO AQUI");  :}
-		//|                                           {: RESULT = ""; :}         
+expRegulares::= ID:a ASIGN expresiones:b PTCOMA expRegulares {:/* RESULT = new NHoja(".",".",b,new NHoja("#","h",null,null));*/ :}
+		|                                           {: RESULT = null; :}         
 		;
            
-expresiones::=  POR:a expCompl:b                    {: RESULT = new NHoja(a,a,b,null); :}
-              | MAS:a expCompl:b                    {: RESULT = new NHoja(a,a,b,null); :}   
-              | SINTER:a expCompl:b                 {: RESULT = new NHoja(a,a,b,null); :}  
-              | DOT:a  expCompl:b expCompl:c        {: RESULT = new NHoja(a,a,b,c); :}
+expresiones::=  DOT:a  expCompl:b expCompl:c        {: RESULT = new NHoja(a,a,b,c);:}
               | DISYUN:a  expCompl:b expCompl:c     {: RESULT = new NHoja(a,a,b,c); :}
+              | POR:a expCompl:b                    {: RESULT = new NHoja(a,a,b,null); :}
+              | MAS:a expCompl:b                    {: RESULT = new NHoja(a,a,b,null); :}   
+              | SINTER:a expCompl:b                 {: RESULT = new NHoja(a,a,b,null); :} 
               ;
 
-expCompl::= expresiones:a   {: RESULT = a; :}
-          | expresA:a       {: RESULT = new NHoja(a,"h",null,null); :}
+expCompl::= expresiones:a   {: RESULT = a; /*System.out.println("Esto es otro nodo");*/ :}
+          | expresA:a       {: RESULT = new NHoja(a,"h",null,null); /*System.out.println("Hoja")*/ ;:}
           ;
 		
 
-expresA::=   CADENA:a                  {: RESULT = a;  :}                          
-           | LLAVEL:a ID:b LLAVER:c    {:  RESULT = b; :} 
+expresA::=   CADENA:a                  {: RESULT = a;  /*System.out.println(a);*/:} 
+           | ESPECIAL:a                {: RESULT = a;  /*System.out.println(a);*/:}                   
+           | LLAVEL:a ID:b LLAVER:c    {:  RESULT = b; /*System.out.println(b);*/:} 
            ;
 
 		

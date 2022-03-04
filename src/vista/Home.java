@@ -10,6 +10,7 @@ package vista;
  */
 import analizador.Lexico;
 import analizador.sintactico;
+import structs.TErrores;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -30,6 +31,8 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.SwingUtilities;
 
 
@@ -43,7 +46,15 @@ public class Home extends javax.swing.JFrame {
     String pathFile = "";
     RSyntaxTextArea textArea = new RSyntaxTextArea();
     RTextScrollPane scrpanel = new RTextScrollPane(textArea);
-    
+    public static List<TErrores> LErrores_G = new ArrayList<>();
+    public static final String ANSI_BLACK = "\u001B[30m";
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_PURPLE = "\u001B[35m";
+    public static final String ANSI_CYAN = "\u001B[36m";
+    public static final String ANSI_WHITE = "\u001B[37m";
         
     public Home() {
         //compilador lexico y sintactico
@@ -405,6 +416,13 @@ public class Home extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
+        
+      //  for(int i = 0; i<sintactico.LErrSintact.lenght;i++){
+      //      sintactico.LErrSintact.get(i);
+                
+      //  }
+        
+                
     }//GEN-LAST:event_jButton3ActionPerformed
 
     
@@ -456,16 +474,22 @@ public class Home extends javax.swing.JFrame {
     
     
     public void analizarContent(String texto){
-        Lexico nlex = new Lexico(new BufferedReader(new StringReader(textArea.getText())));
-        System.err.println("Analisis Lexico Finalizado");
-        sintactico sintact_ = new sintactico(nlex);
-       
+        
         try {
+            Lexico nlex = new Lexico(new StringReader(textArea.getText()));
+            sintactico sintact_ = new sintactico(nlex);
             sintact_.parse();
-            System.out.println("Analisis Sintactico Finalizado");
+            LErrores_G.addAll(nlex.LError);
+            LErrores_G.addAll(sintact_.LErrSintact);
+            System.out.println("Tamaño lista Errores Lista Global "+ LErrores_G.size());
         } catch (Exception e) {
-            System.out.println("Error Sintactico detectado");
+            //System.err.println(e);
+            //System.out.println("");
         }
+        
+        
+        
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -11,11 +11,6 @@ import java.util.List;
 
 %% 
 
-%{
-    public static List<TErrores> LError = new ArrayList();
-%}
-
- 
 %class Lexico
 %public
 %cup
@@ -25,6 +20,9 @@ import java.util.List;
 %full
 %ignorecase     
 %unicode
+%{
+    public static List<TErrores> LError = new ArrayList<>();
+%}
 %init{ 
     yyline = 1; 
     yychar = 1; 
@@ -35,7 +33,7 @@ SALTOLINEA = [\r|\n]
 BLANCOS=[ \r\t]+
 NUMERO = [0-9]+
 LETRA = [A-Za-zÑñ]
-ESPECIAL = (\\n|\\\'|\\\")
+ESPECIAL =  [\"](\\n|\\\'|\\\")[\"]
 SIGNO = [\!-\/\:-\@\[-\`%\{-\}]
 IDENT = [A-Za-zÑñ]([A-Za-zÑñ]|[0-9]|_)*
 CADENA = [\"][^\r\n]*[\"]
@@ -76,4 +74,5 @@ CADENA = [\"][^\r\n]*[\"]
     System.out.println("Error Lexico: "+yytext()+" linea: "+ yyline + " columna " + yycolumn);
     TErrores nwError = new TErrores(yytext(),yyline,yycolumn,"Error Lexico","El simbolo: "+ yytext() +" no pertenece al lenguaje");
     LError.add(nwError);
-}
+    //System.out.println("Tamaño de lista en flex analisis ->  "+LError.size());
+    }

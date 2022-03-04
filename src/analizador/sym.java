@@ -23,6 +23,7 @@ public class sym {
   public static final int DISYUN = 11;
   public static final int VIRGU = 15;
   public static final int CONJ = 2;
+  public static final int ESPECIAL = 22;
   public static final int error = 1;
   public static final int DOT = 7;
   public static final int DDOT = 6;
@@ -52,7 +53,8 @@ public class sym {
   "LETRA",
   "ESPE",
   "ID",
-  "CADENA"
+  "CADENA",
+  "ESPECIAL"
   };
 }
 

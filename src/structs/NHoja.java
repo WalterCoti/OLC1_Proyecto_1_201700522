@@ -20,7 +20,13 @@ public class NHoja {
         this.HojaR = HojaR_;
         this.primeros = "";
         this.ultimos = "";
-        esAnulable( tipo_,HojaR, HojaL);
+        try{
+            esAnulable( tipo_,HojaR, HojaL);
+        }catch(Exception e){
+            System.out.println("");//evitar los null en las hojas finales
+        }
+        
+        
         
     } 
     
