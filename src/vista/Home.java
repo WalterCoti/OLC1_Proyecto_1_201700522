@@ -274,7 +274,7 @@ public class Home extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
     
    
-     
+     //Codigo copiado de esta pagina no me saquen de la U ^_^
  /*---------------------- https://billwaa.wordpress.com/2011/11/14/java-gui-console-output/ ----------------------*/
   private void updateTextArea(final String text) {
     SwingUtilities.invokeLater(new Runnable() {

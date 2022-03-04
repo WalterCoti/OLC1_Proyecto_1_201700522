@@ -9,8 +9,9 @@ import java_cup.runtime.*;
 import structs.TErrores;
 import java.util.ArrayList;
 import java.util.List;
-import structs.NHoja;
-import structs.Conjunto;
+import java.util.HashMap;
+import java.util.Map;
+import structs.*;
 import java_cup.runtime.XMLElement;
 
 /** CUP v0.11b 20160615 (GIT 4ac7450) generated parser.
@@ -195,7 +196,12 @@ public class sintactico extends java_cup.runtime.lr_parser {
 
 
     public List<TErrores> LErrSintact = new ArrayList<TErrores>();
-    public List<Conjunto> LConj= new ArrayList<Conjunto>();
+    public List<String> validaciones = new ArrayList<String>();
+    public Map<String, AFD> Lexpresiones = new HashMap<>();
+    public Map<String, String> LConj = new HashMap<>();
+    public Map<String, String> conjunto = new HashMap<>();
+    
+  
     
     /* metodo error sintactico, se puede recuperar. */ 
         public void syntax_error(Symbol s){ 
@@ -301,19 +307,12 @@ class CUP$sintactico$actions {
 		int bleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)).left;
 		int bright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)).right;
 		String b = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)).value;
-		 boolean exist=false; 
-                                                                for(int i=0;i<LConj.size();i++){
-                                                                   // System.out.println(LConj.get(i).getNameConj()+"<-");
-                                                                   if(a.equals(LConj.get(i).getNameConj())){
-                                                                        exist=true;
-                                                                        break;
-                                                                   }
-                                                                }
-                                                                if(exist){
-                                                                    System.out.println("Error el conjunto: >" + a + "< ya existe, intente cambiar el nombre");
+		
+                                                                if(LConj.containsKey(a)){
+                                                                    System.out.println("Error el conjunto: >" + a + "< ya existe, intente cambiar el nombre"); 
                                                                 }else{
-                                                                    LConj.add(new Conjunto(a,b));
-                                                                    System.out.println("Conjunto: >" + a + "< guardado");
+                                                                    LConj.put(a,b);
+                                                                    System.out.println("Conjunto: > " + a + " < guardado");
                                                                 };
 
 
@@ -532,7 +531,9 @@ class CUP$sintactico$actions {
 		int bleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)).left;
 		int bright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)).right;
 		NHoja b = (NHoja)((java_cup.runtime.Symbol) CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)).value;
-		/* RESULT = new NHoja(".",".",b,new NHoja("#","h",null,null));*/ 
+		 if(!Lexpresiones.containsKey(a)){
+                                                                    Lexpresiones.put(a,new AFD(a,conjunto,new NHoja(".",".",b,new NHoja("#","h",null,null))));
+                                                                }else{System.out.println("El id : "+ a +" para el lexema ya existe intente cambiar de nombre");};     ; 
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expRegulares",4, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-4)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -688,7 +689,7 @@ class CUP$sintactico$actions {
 		int cleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).left;
 		int cright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()).right;
 		String c = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.peek()).value;
-		  RESULT = b; /*System.out.println(b);*/
+		 RESULT =b; if(LConj.containsKey(b)){conjunto.put(b,LConj.get(b));}else{System.out.println("El  conjunto >" +b +"< no existe");}
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("expresA",8, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;
@@ -703,7 +704,7 @@ class CUP$sintactico$actions {
 		int bleft = ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)).left;
 		int bright = ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)).right;
 		String b = (String)((java_cup.runtime.Symbol) CUP$sintactico$stack.elementAt(CUP$sintactico$top-2)).value;
-		 System.out.println("Id: " +a+" Cadena a evaluar: " + b ); 
+		 if(Lexpresiones.containsKey(a)){}else{};
               CUP$sintactico$result = parser.getSymbolFactory().newSymbol("bloqueEvaluar",3, ((java_cup.runtime.Symbol)CUP$sintactico$stack.elementAt(CUP$sintactico$top-4)), ((java_cup.runtime.Symbol)CUP$sintactico$stack.peek()), RESULT);
             }
           return CUP$sintactico$result;

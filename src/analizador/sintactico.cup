@@ -3,13 +3,19 @@ import java_cup.runtime.*;
 import structs.TErrores;
 import java.util.ArrayList;
 import java.util.List;
-import structs.NHoja;
-import structs.Conjunto;
+import java.util.HashMap;
+import java.util.Map;
+import structs.*;
 
 parser code 
 {:
     public List<TErrores> LErrSintact = new ArrayList<TErrores>();
-    public List<Conjunto> LConj= new ArrayList<Conjunto>();
+    public List<String> validaciones = new ArrayList<String>();
+    public Map<String, AFD> Lexpresiones = new HashMap<>();
+    public Map<String, String> LConj = new HashMap<>();
+    public Map<String, String> conjunto = new HashMap<>();
+    
+  
     
     /* metodo error sintactico, se puede recuperar. */ 
         public void syntax_error(Symbol s){ 
@@ -49,19 +55,12 @@ bloqueGlobal::= LLAVEL bloqueDef SEPA SEPA bloqueEvaluar LLAVER bloqueGlobal
 		;
 bloqueDef::= defConj expRegulares;
 
-defConj::=  CONJ DDOT ID:a ASIGN conjSimb:b PTCOMA defConj  {: boolean exist=false; 
-                                                                for(int i=0;i<LConj.size();i++){
-                                                                   // System.out.println(LConj.get(i).getNameConj()+"<-");
-                                                                   if(a.equals(LConj.get(i).getNameConj())){
-                                                                        exist=true;
-                                                                        break;
-                                                                   }
-                                                                }
-                                                                if(exist){
-                                                                    System.out.println("Error el conjunto: >" + a + "< ya existe, intente cambiar el nombre");
+defConj::=  CONJ DDOT ID:a ASIGN conjSimb:b PTCOMA defConj  {:
+                                                                if(LConj.containsKey(a)){
+                                                                    System.out.println("Error el conjunto: >" + a + "< ya existe, intente cambiar el nombre"); 
                                                                 }else{
-                                                                    LConj.add(new Conjunto(a,b));
-                                                                    System.out.println("Conjunto: >" + a + "< guardado");
+                                                                    LConj.put(a,b);
+                                                                    System.out.println("Conjunto: > " + a + " < guardado");
                                                                 };
 
 :}
@@ -80,11 +79,13 @@ conjUnit::= NUMB:a conjUnit:b                       {: RESULT = a+b; :}
             | COMA:a LETRA:b conjUnit:c             {: RESULT = a+b+c; :}
             | COMA:a SIGNO:b conjUnit:c             {: RESULT = a+b+c; :}
             | COMA:a ESPE:b conjUnit:c              {: RESULT = a+b+c; :}
-            |                                        {: RESULT = null; :}
+            |                                       {: RESULT = null; :}
             ;
 
                                            
-expRegulares::= ID:a ASIGN expresiones:b PTCOMA expRegulares {:/* RESULT = new NHoja(".",".",b,new NHoja("#","h",null,null));*/ :}
+expRegulares::= ID:a ASIGN expresiones:b PTCOMA expRegulares {: if(!Lexpresiones.containsKey(a)){
+                                                                    Lexpresiones.put(a,new AFD(a,conjunto,new NHoja(".",".",b,new NHoja("#","h",null,null))));
+                                                                }else{System.out.println("El id : "+ a +" para el lexema ya existe intente cambiar de nombre");};     ; :}
 		|                                           {: RESULT = null; :}         
 		;
            
@@ -102,10 +103,10 @@ expCompl::= expresiones:a   {: RESULT = a; /*System.out.println("Esto es otro no
 
 expresA::=   CADENA:a                  {: RESULT = a;  /*System.out.println(a);*/:} 
            | ESPECIAL:a                {: RESULT = a;  /*System.out.println(a);*/:}                   
-           | LLAVEL:a ID:b LLAVER:c    {:  RESULT = b; /*System.out.println(b);*/:} 
+           | LLAVEL:a ID:b LLAVER:c    {: RESULT =b; if(LConj.containsKey(b)){conjunto.put(b,LConj.get(b));}else{System.out.println("El  conjunto >" +b +"< no existe");}:}
            ;
 
 		
-bloqueEvaluar::= ID:a DDOT CADENA:b PTCOMA bloqueEvaluar    {: System.out.println("Id: " +a+" Cadena a evaluar: " + b ); :}
+bloqueEvaluar::= ID:a DDOT CADENA:b PTCOMA bloqueEvaluar    {: if(Lexpresiones.containsKey(a)){}else{};:}
 		|
 		;
