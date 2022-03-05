@@ -17,23 +17,23 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.System.Logger;
-import java.lang.System.Logger.Level;
-import java.util.Scanner;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
-import control.control;
-import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.SwingUtilities;
+import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
+import structs.AFD;
 
 
         
@@ -46,30 +46,30 @@ public class Home extends javax.swing.JFrame {
     String pathFile = "";
     RSyntaxTextArea textArea = new RSyntaxTextArea();
     RTextScrollPane scrpanel = new RTextScrollPane(textArea);
-    public static List<TErrores> LErrores_G = new ArrayList<>();
-    public static final String ANSI_BLACK = "\u001B[30m";
-    public static final String ANSI_RED = "\u001B[31m";
-    public static final String ANSI_GREEN = "\u001B[32m";
-    public static final String ANSI_YELLOW = "\u001B[33m";
-    public static final String ANSI_BLUE = "\u001B[34m";
-    public static final String ANSI_PURPLE = "\u001B[35m";
-    public static final String ANSI_CYAN = "\u001B[36m";
-    public static final String ANSI_WHITE = "\u001B[37m";
+    public List<TErrores> LGlobalErroreses = new ArrayList<TErrores>();
+    public static Map<String, AFD> arboles = new HashMap<>();
+    
+    
         
     public Home() {
         //compilador lexico y sintactico
-        try{
+      /*  try{
             String ruta  = "src/analizador/";
             String opcFLex[] = {ruta+"lexico.jflex","-d",ruta};
             jflex.Main.generate(opcFLex);
             String opcCup[] = {"-destdir",ruta,"-parser","sintactico",ruta+"sintactico.cup"};
             java_cup.Main.main(opcCup);
         } catch(Exception e){
-        }
+            System.out.println(e);
+        }*/
         
         initComponents();
+      
         jPcode.add(scrpanel);
+         
         redirectSystemStreams(); //Capturar lo que se imprima en consola
+        configTExtArea();
+         
         
     }
 
@@ -273,7 +273,15 @@ public class Home extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     
-   
+    public void configTExtArea(){
+        try {
+            textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_CLOJURE);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+    
+    
      //Codigo copiado de esta pagina no me saquen de la U ^_^
  /*---------------------- https://billwaa.wordpress.com/2011/11/14/java-gui-console-output/ ----------------------*/
   private void updateTextArea(final String text) {
@@ -406,7 +414,29 @@ public class Home extends javax.swing.JFrame {
     }//GEN-LAST:event_BtnSaveAsFileActionPerformed
 
     private void BtnGen_AutomataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnGen_AutomataActionPerformed
-        // TODO add your handling code here:
+        sintactico pars;
+        
+        try {
+           
+            Lexico lexical = new Lexico(new StringReader(textArea.getText()));
+            pars=new sintactico(lexical);
+            pars.parse();
+            arboles = pars.Lexpresiones;
+            for(AFD arbol: arboles.values()){
+                arbol.GraficarArbol();
+                
+            }
+           
+            try{ Thread.sleep(300); }
+            catch(Exception e ) 
+            { 
+                System.out.println("Thread Interrupted"); 
+            }
+           
+        } catch (Exception ex) {
+            System.out.println("Error fatal en compilación de entrada.");
+            System.out.println("Causa: "+ex.getCause());
+        } 
     }//GEN-LAST:event_BtnGen_AutomataActionPerformed
 
     private void BtnAnalisisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnAnalisisActionPerformed
@@ -479,11 +509,11 @@ public class Home extends javax.swing.JFrame {
             Lexico nlex = new Lexico(new StringReader(textArea.getText()));
             sintactico sintact_ = new sintactico(nlex);
             sintact_.parse();
-            LErrores_G.addAll(nlex.LError);
-            LErrores_G.addAll(sintact_.LErrSintact);
-            System.out.println("Tamaño lista Errores Lista Global "+ LErrores_G.size());
+            LGlobalErroreses.addAll(nlex.LError);
+            LGlobalErroreses.addAll(sintact_.LErrSintact);
+            System.out.println("Tamaño lista Errores Lista Global "+ LGlobalErroreses.size());
         } catch (Exception e) {
-            //System.err.println(e);
+            System.err.println(e);
             //System.out.println("");
         }
         
