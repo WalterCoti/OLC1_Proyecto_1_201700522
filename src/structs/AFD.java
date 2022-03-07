@@ -38,6 +38,9 @@ public class AFD {
         
     }
     
+    public void GenerarAutomatas(){
+        
+    }
     
     public void generarDatos(){
         this.raiz = genData(this.raiz);
@@ -66,7 +69,7 @@ public class AFD {
             this.id++;
         }
         else{
-            node = genTipo(node);
+            node = damePri_Ult(node);
         }
         if(".".equals(node.tipo) || "*".equals(node.tipo) || "+".equals(node.tipo)){
             genSiguientes(node);
@@ -74,7 +77,7 @@ public class AFD {
         return node;
     }
     
-    public NHoja genTipo(NHoja node){
+    public NHoja damePri_Ult(NHoja node){
         switch(node.tipo){
             case ".":
                 if (node.HojaL.anulable) {
@@ -139,10 +142,7 @@ public class AFD {
     
     public void GraficarArbol(){
         String pathx="./Reportes/Arboles_201700522/";
-        File directorio = new File(pathx);
-        if (!directorio.exists()) {
-            directorio.mkdirs();
-        }
+        CrearDirectorio(pathx);
         FileWriter file_dot;
         PrintWriter writefil;
         try
@@ -154,6 +154,7 @@ public class AFD {
                 + "forcelabels= true;\n"
                 + "node [shape = plaintext];\n");
             writefil.println(graphArbol(this.raiz));
+            writefil.println("\n}");
             file_dot.close();
             Runtime rt = Runtime.getRuntime();
             rt.exec( "dot -Tjpg -o "+pathx+nameAFD+".jpg graf "+pathx+nameAFD+".dot");
@@ -180,7 +181,7 @@ public class AFD {
                 + "</tr>\n"+
                 "<tr>\n"
                 + "\t<td></td>\n"
-                + "\t<td>"+node.ID_nodo+"</td>\n"
+                + "\t<td>"+getID(node.ID_nodo)+"</td>\n"
                 + "\t<td></td>\n"
                 + "\t</tr>\n"
                 + "</table>>";
@@ -206,13 +207,16 @@ public class AFD {
         }
         return text;
     }
+    public String getID(int valor){
+        if(valor==0){
+            return "";
+        }
+        return Integer.toString(valor);
+    }
     
      public void GraficarSiguientes(){
         String pathx="./Reportes/Siguientes_201700522/";
-        File directorio = new File(pathx);
-        if (!directorio.exists()) {
-            directorio.mkdirs();
-        }
+        CrearDirectorio(pathx);
         FileWriter file_dot;
         PrintWriter writefil;
         try
@@ -240,10 +244,10 @@ public class AFD {
                     + "</table>>";
             String text = "nodo"+this.aux+" [label = "+tabla+"];\n";
             writefil.println(text);
-            writefil.println("\n}");
+            writefil.println("\n}");//fin
             writefil.close();
             Runtime rt = Runtime.getRuntime();
-            rt.exec( "dot -Tjpg -o" +pathx+nameAFD+".jpg graf "+pathx+nameAFD+".dot");
+            rt.exec( "dot -Tjpg -o " +pathx+nameAFD+".jpg graf "+pathx+nameAFD+".dot");
         }catch(IOException e){
             System.out.println("Error al graficar los Siguientes");
         }  
@@ -251,8 +255,8 @@ public class AFD {
     
    
     public void CrearTransiciones(){
-        String [] data = {"S0",this.raiz.primeros};
-        this.LTransiciones.put(this.raiz.primeros,data);
+        String [] datos = {"S0",this.raiz.primeros};
+        this.LTransiciones.put(this.raiz.primeros,datos);
         createTransition(this.LTransiciones.get(this.raiz.primeros));
     }
     
@@ -300,17 +304,14 @@ public class AFD {
     
      public void GraficarTransiciones(){
         String pathx="./Reportes/Transiciones_201700522";
-        File directorio = new File(pathx);
-        if (!directorio.exists()) {
-            directorio.mkdirs();
-        }
+        CrearDirectorio(pathx);
         FileWriter file_dot;
         PrintWriter writefil;
         try
         {
             file_dot = new FileWriter(pathx+"/"+nameAFD+".dot");
             writefil = new PrintWriter(file_dot);
-            writefil.println("digraph grafica{\n"
+            writefil.println("digraph Transiciones{\n"
                 + "rankdir=LR;\n"
                 + "forcelabels= true;\n"
                 + "node [shape = plain];\n");
@@ -356,25 +357,22 @@ public class AFD {
     
     public void GraficarAFD(){
         String pathx="./Reportes/AFD_201700522";
-        File directorio = new File(pathx);
-        if (!directorio.exists()) {
-            directorio.mkdirs();
-        }
-        FileWriter fichero;
-        PrintWriter escritor;
+        CrearDirectorio(pathx);
+        FileWriter file_dot;
+        PrintWriter writefil;
         try
         {
-            fichero = new FileWriter("./AFD_201903872/"+nameAFD+".dot");
-            escritor = new PrintWriter(fichero);
-            escritor.println("digraph grafica{\n"
+            file_dot = new FileWriter(pathx+nameAFD+".dot");
+            writefil = new PrintWriter(file_dot);
+            writefil.println("digraph GraphAFD{\n"
                 + "rankdir=LR;\n"
                 + "forcelabels= true;\n"
                 + "node [shape = circle];\n");
             for(int x=0; x<this.LTransiciones.size();x++){
                 if (terminales.contains("S"+x)){
-                    escritor.println("S"+x+" [label = \""+"S"+x+"\", shape = doublecircle];\n");
+                    writefil.println("S"+x+" [label = \""+"S"+x+"\", shape = doublecircle];\n");
                 }else{
-                    escritor.println("S"+x+" [label = \""+"S"+x+"\"];\n");
+                    writefil.println("S"+x+" [label = \""+"S"+x+"\"];\n");
                 }
             }
             for(String[]k: transiciones){
@@ -385,14 +383,21 @@ public class AFD {
                 if(" ".equals(k[2])){
                     dat = "\\\" \\\"";
                 }
-                escritor.println(k[0]+"->"+k[1]+"[label=\""+dat+"\"]\n");
+                writefil.println(k[0]+"->"+k[1]+"[label=\""+dat+"\"]\n");
             }
-            escritor.println("\n}");
-            fichero.close();
+            writefil.print("\n}");
+            file_dot.close();
             Runtime rt = Runtime.getRuntime();
-            rt.exec( "dot -Tjpg -o "+pathx+nameAFD+".jpg graf"+pathx+nameAFD+".dot");
+            rt.exec( "dot -Tjpg -o "+pathx+nameAFD+".jpg graf "+pathx+nameAFD+".dot");
         }catch(IOException e){
             System.out.println("Error al crear AFD");
+        }
+    }
+    
+    public void CrearDirectorio(String path){
+        File directorio = new File(path);
+        if (!directorio.exists()) {
+            directorio.mkdirs();
         }
     }
     
