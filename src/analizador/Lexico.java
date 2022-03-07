@@ -107,12 +107,12 @@ public class Lexico implements java_cup.runtime.Scanner {
   private static final String ZZ_ACTION_PACKED_0 =
     "\1\0\1\1\2\2\3\3\1\4\1\5\1\6\1\3"+
     "\1\7\1\3\1\10\1\11\1\12\1\3\1\13\2\14"+
-    "\1\15\1\16\1\17\1\20\1\0\1\21\1\0\1\22"+
-    "\1\23\2\0\2\24\1\21\1\0\1\2\3\0\1\24"+
-    "\1\25\1\0\1\26\1\2";
+    "\1\3\1\15\1\16\1\17\1\20\1\0\1\21\1\0"+
+    "\1\22\1\23\2\0\2\24\1\25\1\2\3\0\1\24"+
+    "\1\0\1\26\1\2";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[44];
+    int [] result = new int[43];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -139,13 +139,13 @@ public class Lexico implements java_cup.runtime.Scanner {
   private static final String ZZ_ROWMAP_PACKED_0 =
     "\0\0\0\41\0\102\0\41\0\41\0\143\0\204\0\41"+
     "\0\41\0\41\0\245\0\41\0\306\0\347\0\41\0\41"+
-    "\0\u0108\0\41\0\u0129\0\u014a\0\41\0\41\0\41\0\41"+
-    "\0\u016b\0\u016b\0\u018c\0\41\0\41\0\u01ad\0\u01ce\0\u0129"+
-    "\0\u01ef\0\u0210\0\u0210\0\u01ad\0\u0231\0\u0252\0\u0273\0\u0294"+
-    "\0\u016b\0\u02b5\0\u0129\0\u0273";
+    "\0\u0108\0\41\0\u0129\0\u014a\0\u016b\0\41\0\41\0\41"+
+    "\0\41\0\143\0\41\0\u018c\0\41\0\41\0\u01ad\0\u01ce"+
+    "\0\u0129\0\u01ef\0\41\0\u01ad\0\u0210\0\u0231\0\u0252\0\u0273"+
+    "\0\u0294\0\u0129\0\u0252";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[44];
+    int [] result = new int[43];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -171,23 +171,22 @@ public class Lexico implements java_cup.runtime.Scanner {
     "\1\2\1\3\1\4\1\0\1\3\1\5\1\6\1\5"+
     "\1\7\1\5\1\10\1\11\1\12\1\13\1\14\1\15"+
     "\1\16\1\17\1\20\1\21\1\5\1\22\1\23\1\24"+
-    "\3\23\2\5\1\25\1\26\1\27\1\30\42\0\1\3"+
-    "\2\0\1\3\34\0\2\31\1\0\1\31\1\0\1\31"+
-    "\1\32\24\31\1\33\5\31\10\0\1\34\54\0\1\35"+
-    "\33\0\1\36\41\0\1\16\25\0\1\37\53\0\1\40"+
-    "\5\0\5\40\1\0\1\40\24\0\1\40\5\0\4\40"+
-    "\1\41\1\0\1\40\4\0\2\31\1\0\1\31\1\0"+
-    "\1\31\1\32\34\31\1\0\1\31\1\0\1\31\1\42"+
-    "\2\31\1\43\17\31\1\43\7\31\2\44\1\0\1\4"+
-    "\1\0\34\44\5\45\1\46\16\45\1\47\14\45\20\0"+
-    "\1\40\5\0\3\40\1\50\1\40\1\0\1\40\4\0"+
-    "\2\31\1\0\1\31\1\0\1\31\1\51\32\31\5\45"+
-    "\1\46\33\45\5\37\1\52\16\37\1\4\14\37\24\0"+
-    "\1\37\34\0\1\40\5\0\2\40\1\53\2\40\1\0"+
-    "\1\40\4\0\5\45\1\46\16\45\1\54\14\45";
+    "\3\23\1\25\1\5\1\26\1\27\1\30\1\31\42\0"+
+    "\1\3\2\0\1\3\34\0\2\32\1\0\3\32\1\33"+
+    "\24\32\1\34\5\32\10\0\1\35\54\0\1\36\33\0"+
+    "\1\37\41\0\1\16\25\0\1\40\53\0\1\41\5\0"+
+    "\5\41\1\0\1\41\24\0\1\41\5\0\4\41\1\42"+
+    "\1\0\1\41\12\0\1\43\2\0\1\43\17\0\1\43"+
+    "\15\0\1\32\2\0\1\32\17\0\1\32\7\0\2\44"+
+    "\1\0\1\4\1\0\34\44\5\45\1\46\16\45\1\47"+
+    "\14\45\20\0\1\41\5\0\3\41\1\50\1\41\1\0"+
+    "\1\41\4\0\5\45\1\46\33\45\5\40\1\51\16\40"+
+    "\1\4\14\40\24\0\1\40\34\0\1\41\5\0\2\41"+
+    "\1\52\2\41\1\0\1\41\4\0\5\45\1\46\16\45"+
+    "\1\53\14\45";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[726];
+    int [] result = new int[693];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -231,12 +230,12 @@ public class Lexico implements java_cup.runtime.Scanner {
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
     "\1\0\1\11\1\1\2\11\2\1\3\11\1\1\1\11"+
-    "\2\1\2\11\1\1\1\11\2\1\4\11\1\0\1\1"+
-    "\1\0\2\11\2\0\3\1\1\0\1\1\3\0\2\1"+
+    "\2\1\2\11\1\1\1\11\3\1\4\11\1\0\1\11"+
+    "\1\0\2\11\2\0\2\1\1\11\1\1\3\0\1\1"+
     "\1\0\2\1";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[44];
+    int [] result = new int[43];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -828,7 +827,7 @@ public class Lexico implements java_cup.runtime.Scanner {
             // fall through
           case 42: break;
           case 21:
-            { /*System.out.println("Lexico "+yytext()+" ESPE");*/ return new Symbol(sym.ESPE,yycolumn,yyline, yytext());
+            { /*System.out.println("Lexico "+yytext()+" ESPE");*/ return new Symbol(sym.ESPECIAL,yycolumn,yyline, yytext());
             }
             // fall through
           case 43: break;

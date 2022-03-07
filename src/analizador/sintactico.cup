@@ -38,8 +38,8 @@ parser code
 :} 
 
 terminal String CONJ,SEPA,ASIGN,PTCOMA,DDOT,DOT,COMA,LLAVEL,LLAVER,DISYUN,SINTER,MAS,POR,VIRGU;
-terminal String NUMB,SIGNO,LETRA,ESPE,ID,CADENA,ESPECIAL;
-non terminal String inicio,bloqueGlobal,bloqueDef,bloqueEvaluar;
+terminal String NUMB,SIGNO,LETRA,ESPECIAL,ID,CADENA;
+non terminal String inicio,bloqueGlobal,bloqueDef,bloqueEvaluar,conjultimo;
 non terminal String expRegulares,conjSimb,defConj,conjUnit,expresA;
 non terminal NHoja expresiones;
 
@@ -63,19 +63,30 @@ defConj::=  CONJ DDOT ID:a ASIGN conjSimb:b PTCOMA defConj  {:  if(LConj.contain
                                                                 };:}
             |
             ;
-conjSimb::= NUMB:a VIRGU:b NUMB:c             {: RESULT = a+b+c;  :}
-            |LETRA:a VIRGU:b LETRA:c          {: RESULT = a+b+c;  :}
-            |SIGNO:a VIRGU:b SIGNO:c          {: RESULT = a+b+c;  :}
-            |conjUnit:a                       {: RESULT = a;:}
+conjSimb::= NUMB:a VIRGU:b conjultimo:c            {: RESULT = a+b+c;  :}
+            |LETRA:a VIRGU:b conjultimo:c          {: RESULT = a+b+c;  :}
+            |SIGNO:a VIRGU:b conjultimo:c          {: RESULT = a+b+c;  :}
+            |CADENA:a VIRGU:b conjultimo:c         {: RESULT = a+b+c;  :}
+            |ESPECIAL:a VIRGU:b conjunltimo:c      {:RESULT = a+b+c:}
+            |conjUnit:a                            {: RESULT = a;:}
             ;
 
-conjUnit::= NUMB:a conjUnit:b                       {: RESULT = a+b; :}
+conjultimo::= NUMB:a                {: RESULT = a;:}
+            | LETRA:a               {: RESULT = a;:}
+            | SIGNO:a               {: RESULT = a;:}
+            | CADENA:a              {: RESULT = a;:}
+            | ESPECIAL:             {: RESULT = a;:}
+            ;
+
+conjUnit::=   NUMB:a conjUnit:b                       {: RESULT = a+b; :}
             | LETRA:a conjUnit:b                    {: RESULT = a+b; :}
             | SIGNO:a conjUnit:b                    {: RESULT = a+b; :}
+            | CADENA:a conjUnit:b                    {: RESULT = a+b; :}
+            | ESPECIAL:a conjUnit
             | COMA:a NUMB:b conjUnit:c              {: RESULT = a+b+c; :}
             | COMA:a LETRA:b conjUnit:c             {: RESULT = a+b+c; :}
             | COMA:a SIGNO:b conjUnit:c             {: RESULT = a+b+c; :}
-            | COMA:a ESPE:b conjUnit:c              {: RESULT = a+b+c; :}
+            | COMA:a CADENA:b conjUnit:c          {: RESULT = a+b+c; :}
             |                                       {: RESULT = ""; :}
             ;
 
@@ -94,8 +105,9 @@ expresiones::=  DOT:a  expresiones:b expresiones:c     {: RESULT = new NHoja(a,a
               | expresA:a                              {: RESULT = new NHoja(a,"h",null,null);:}
               ;
 
-expresA::=   CADENA:a                  {: RESULT = a; :} 
-           | ESPECIAL:a                {: RESULT = a;:}                   
+
+expresA::=   CADENA:a                  {: RESULT = a.substring(1, a.length()-1);:} 
+           | ESPECIAL:a                {: RESULT = a.substring(1, a.length()-1);:}                   
            | LLAVEL:a ID:b LLAVER:c    {: RESULT =b; if(LConj.containsKey(b)){conjunto.put(b,LConj.get(b));}else{System.out.println("El  conjunto >" +b +"< no existe");}:}
            ;
 

@@ -23,12 +23,11 @@ public class sym {
   public static final int DISYUN = 11;
   public static final int VIRGU = 15;
   public static final int CONJ = 2;
-  public static final int ESPECIAL = 22;
+  public static final int ESPECIAL = 19;
   public static final int error = 1;
   public static final int DOT = 7;
   public static final int DDOT = 6;
   public static final int SINTER = 12;
-  public static final int ESPE = 19;
   public static final int MAS = 13;
   public static final int PTCOMA = 5;
   public static final String[] terminalNames = new String[] {
@@ -51,10 +50,9 @@ public class sym {
   "NUMB",
   "SIGNO",
   "LETRA",
-  "ESPE",
+  "ESPECIAL",
   "ID",
-  "CADENA",
-  "ESPECIAL"
+  "CADENA"
   };
 }
 

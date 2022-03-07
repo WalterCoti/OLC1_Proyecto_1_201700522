@@ -32,6 +32,8 @@ public class AFD {
         this.raiz = raiz_;
         try {
             generarDatos();
+            CrearTransiciones();
+          
         } catch (Exception e) {
             //System.out.println(e+"Es aquihdspm");
         }
@@ -39,7 +41,10 @@ public class AFD {
     }
     
     public void GenerarAutomatas(){
-        
+        GraficarArbol();
+        GraficarSiguientes();
+        GraficarTransiciones();
+        GraficarAFD();
     }
     
     public void generarDatos(){
@@ -158,6 +163,7 @@ public class AFD {
             file_dot.close();
             Runtime rt = Runtime.getRuntime();
             rt.exec( "dot -Tjpg -o "+pathx+nameAFD+".jpg graf "+pathx+nameAFD+".dot");
+            System.out.println("Arbol \"" + nameAFD + "\" creado exitosamente");
         }catch(IOException e){
             System.out.println("Error al crear arbol");
         } 
@@ -248,6 +254,7 @@ public class AFD {
             writefil.close();
             Runtime rt = Runtime.getRuntime();
             rt.exec( "dot -Tjpg -o " +pathx+nameAFD+".jpg graf "+pathx+nameAFD+".dot");
+            System.out.println("Tabla de Siguientes  \"" + nameAFD + "\" creado exitosamente");
         }catch(IOException e){
             System.out.println("Error al graficar los Siguientes");
         }  
@@ -303,13 +310,13 @@ public class AFD {
     }
     
      public void GraficarTransiciones(){
-        String pathx="./Reportes/Transiciones_201700522";
+        String pathx="./Reportes/Transiciones_201700522/";
         CrearDirectorio(pathx);
         FileWriter file_dot;
         PrintWriter writefil;
         try
         {
-            file_dot = new FileWriter(pathx+"/"+nameAFD+".dot");
+            file_dot = new FileWriter(pathx+nameAFD+".dot");
             writefil = new PrintWriter(file_dot);
             writefil.println("digraph Transiciones{\n"
                 + "rankdir=LR;\n"
@@ -349,6 +356,7 @@ public class AFD {
             file_dot.close();
             Runtime rt = Runtime.getRuntime();
             rt.exec( "dot -Tjpg -o " + pathx + nameAFD+".jpg graf " + pathx + nameAFD + ".dot");
+            System.out.println("Transiciones de \"" + nameAFD + "\" creado exitosamente");
         }catch(IOException e){
             System.out.println("Error al graficar la tabla de transiciones");
         }
@@ -356,7 +364,7 @@ public class AFD {
     
     
     public void GraficarAFD(){
-        String pathx="./Reportes/AFD_201700522";
+        String pathx="./Reportes/AFD_201700522/";
         CrearDirectorio(pathx);
         FileWriter file_dot;
         PrintWriter writefil;
@@ -388,7 +396,9 @@ public class AFD {
             writefil.print("\n}");
             file_dot.close();
             Runtime rt = Runtime.getRuntime();
-            rt.exec( "dot -Tjpg -o "+pathx+nameAFD+".jpg graf "+pathx+nameAFD+".dot");
+            
+            rt.exec( "dot -Tjpg -o " + pathx + nameAFD+".jpg graf " + pathx + nameAFD + ".dot");
+            System.out.println("Grafo " + nameAFD + " creado exitosamente");
         }catch(IOException e){
             System.out.println("Error al crear AFD");
         }
@@ -398,6 +408,88 @@ public class AFD {
         File directorio = new File(path);
         if (!directorio.exists()) {
             directorio.mkdirs();
+        }
+    }
+    
+    public boolean ValidarCadena(String cadena){
+        String actual = "S0";
+        boolean respuesta = false;
+        for(int x=0; x<cadena.length(); x++){
+            respuesta = false;
+            char carAct = cadena.charAt(x);
+            for(String[] estado: this.transiciones){
+                if(carAct=='\\'){
+                    if((x+1)<cadena.length()){
+                        if(cadena.charAt(x+1)=='\''){
+                            carAct = '\'';
+                            x++;
+                        }else if(cadena.charAt(x+1)=='n'){
+                            carAct = '\n';
+                            x++;
+                        }else if(cadena.charAt(x+1)=='\"'){
+                            carAct = '\"';
+                            x++;
+                        }
+                    }
+                }
+                if(estado[0].equals(actual)){
+                    String alfabeto = estado[2]; 
+                    if(conjuntos.get(estado[2])!=null){
+                        actual = estado[1];
+                        respuesta = ValidarConjunto((int)carAct, conjuntos.get(estado[2]));
+                    }
+                    else{
+                        char alfa = estado[2].charAt(0);
+                        if(estado[2].length()==2 && alfa=='\\'){
+                            if(estado[2].charAt(1)=='\''){
+                                alfa = '\'';
+                            }else if(estado[2].charAt(1)=='n'){
+                                alfa = '\n';
+                            }else if(estado[2].charAt(1)=='\"'){
+                                alfa = '\"';
+                            }
+                        }
+                        if((int)carAct == (int)alfa){
+                            actual = estado[1];
+                            respuesta = true;
+                        }else{respuesta = false;}
+                    }
+                }
+                if(respuesta){break;}
+            }
+            if(!respuesta){break;}
+        }
+        if(respuesta){
+            System.out.println("La cadena : " + cadena+" ES valida con la expresion: "+this.nameAFD);
+        }else{
+            System.out.println("La cadena : " + cadena+" NO es valida con la expresion: "+this.nameAFD);
+        }
+        return respuesta;
+    }
+    
+     public boolean ValidarConjunto(int caracter, String x){
+        if(x.split("~").length==2){//si es un rango
+            int min = x.charAt(0);
+            int max = x.charAt(2);
+            
+            if(min>max){
+                int aux = max;
+                min = max;
+                max = aux;
+            }
+            if((int)caracter >= min && (int)caracter<=max){
+                return true;
+            }
+            return false;
+        }
+        else{
+            for(String chaar: x.split(",")){    // si es una serie
+                int val = (int)chaar.charAt(0);
+                if(caracter == val){
+                    return true;
+                }
+            }
+            return false;
         }
     }
     
