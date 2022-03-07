@@ -16,12 +16,15 @@ import java.util.Map;
 public class AFD {
     String nameAFD;
     NHoja raiz;
-    int id,aux=1;
+    int id = 1;
+    int aux =  1;
     List<String> alfabeto = new ArrayList<>();
+    List<String[]> transiciones = new ArrayList<>();   
+    List<String> terminales = new ArrayList<>();
     Map<String,String> conjuntos = new HashMap<>();
     Map<String, String> Lalfabeto = new HashMap<>();
     Map<Integer, String[]> LSiguientes = new HashMap<>();
-    
+    Map<String, String[]> LTransiciones = new HashMap<>();
     
     public AFD(String nombreAFD_, Map<String,String> conjuntos_,NHoja raiz_){
         this.nameAFD=nombreAFD_;
@@ -50,7 +53,7 @@ public class AFD {
             node.HojaR = genData(node.HojaR);
         }
         
-        if("h".equalsIgnoreCase(node.tipo)){
+        if("h".equals(node.tipo)){
             node.primeros = this.id +"";
             node.ultimos = this.id +"";
             node.ID_nodo = this.id;
@@ -135,7 +138,224 @@ public class AFD {
     }
     
     public void GraficarArbol(){
-        String pathx="./Reportes/Arboles_201700522";
+        String pathx="./Reportes/Arboles_201700522/";
+        File directorio = new File(pathx);
+        if (!directorio.exists()) {
+            directorio.mkdirs();
+        }
+        FileWriter file_dot;
+        PrintWriter writefil;
+        try
+        {
+            file_dot = new FileWriter(pathx+nameAFD+".dot");
+            writefil = new PrintWriter(file_dot);
+            writefil.println("digraph arbol{\n"
+                + "rankdir=TB;\n"
+                + "forcelabels= true;\n"
+                + "node [shape = plaintext];\n");
+            writefil.println(graphArbol(this.raiz));
+            file_dot.close();
+            Runtime rt = Runtime.getRuntime();
+            rt.exec( "dot -Tjpg -o "+pathx+nameAFD+".jpg graf "+pathx+nameAFD+".dot");
+        }catch(IOException e){
+            System.out.println("Error al crear arbol");
+        } 
+    }
+    
+    public String graphArbol(NHoja node){
+        int padre = this.aux;
+        int hijoL = 0;
+        int hijoR = 0;
+        String anulable = (node.anulable)?"V":"F";
+        String Tablanodo = "<<table border = '0'>\n"+
+                "<tr>\n"
+                + "\t<td></td>\n"
+                + "\t<td>"+anulable+"</td>\n"
+                + "\t<td></td>\n"
+                + "</tr>\n"+
+                "<tr>\n"
+                + "\t<td>"+node.primeros+"</td>\n"
+                + "\t<td border='1'>"+node.valor+"</td>\n"
+                + "\t<td>"+node.ultimos+"</td>"
+                + "</tr>\n"+
+                "<tr>\n"
+                + "\t<td></td>\n"
+                + "\t<td>"+node.ID_nodo+"</td>\n"
+                + "\t<td></td>\n"
+                + "\t</tr>\n"
+                + "</table>>";
+        String text = "hoja"+this.aux+" [label = "+Tablanodo+"];\n";
+        this.aux++;
+        if(node.HojaL!=null){
+            hijoL = this.aux;
+            text+= graphArbol(node.HojaL);
+            this.aux++;
+        }
+        if(node.HojaR!=null){
+            hijoR = this.aux;
+            text+= graphArbol(node.HojaR);
+            this.aux++;
+        }
+        if(!"h".equals(node.tipo)){
+            if(hijoL!=0){
+                text+= "hoja"+padre+"->"+"hoja"+(hijoL)+"\n";
+            }
+            if(hijoR!=0){
+                text+= "hoja"+padre+"->"+"hoja"+(hijoR)+"\n";
+            }
+        }
+        return text;
+    }
+    
+     public void GraficarSiguientes(){
+        String pathx="./Reportes/Siguientes_201700522/";
+        File directorio = new File(pathx);
+        if (!directorio.exists()) {
+            directorio.mkdirs();
+        }
+        FileWriter file_dot;
+        PrintWriter writefil;
+        try
+        {
+            file_dot = new FileWriter(pathx+nameAFD+".dot");
+            writefil = new PrintWriter(file_dot);
+            writefil.println("digraph grphsiguientes{\n"
+                + "rankdir=LR;\n"
+                + "forcelabels= true;\n"
+                + "node [shape = plain];\n");
+            String td = "";
+            for(String[] dato: this.LSiguientes.values()){
+                td+="<tr>\n"
+                    + "\t<td>"+dato[0]+"</td>\n"
+                    + "\t<td>"+dato[1]+"</td>\n"
+                    + "\t<td>"+dato[2]+"</td>\n"
+                    + "</tr>\n";
+            }
+            String tabla = "<<table border = '1' cellboder = '1' cellspacing='0' cellpadding='10'>\n"
+                    + "<tr>\n"
+                    + "\t<td COLSPAN='2'>HOJA</td>\n"
+                    + "\t<td>Siguientes</td>\n"
+                    + "</tr>\n"
+                    + td
+                    + "</table>>";
+            String text = "nodo"+this.aux+" [label = "+tabla+"];\n";
+            writefil.println(text);
+            writefil.println("\n}");
+            writefil.close();
+            Runtime rt = Runtime.getRuntime();
+            rt.exec( "dot -Tjpg -o" +pathx+nameAFD+".jpg graf "+pathx+nameAFD+".dot");
+        }catch(IOException e){
+            System.out.println("Error al graficar los Siguientes");
+        }  
+    }
+    
+   
+    public void CrearTransiciones(){
+        String [] data = {"S0",this.raiz.primeros};
+        this.LTransiciones.put(this.raiz.primeros,data);
+        createTransition(this.LTransiciones.get(this.raiz.primeros));
+    }
+    
+    public void createTransition(String[] Tra){
+        boolean ter = false;
+        List<String[]> Ltmptransiciones = new ArrayList<>();
+        for(String y: this.alfabeto){
+            Map<String, String> Ltmptrans = new HashMap<>();
+            String trans = "";
+            for(String k: Tra[1].split(",")){
+                String[] sig = this.LSiguientes.get(Integer.parseInt(k));
+                if(y.equals(sig[0])){
+                    for(String g: sig[2].split(",")){
+                        if(!Ltmptrans.containsKey(g)){
+                            if(Integer.parseInt(g) == id-1){
+                                ter = true;
+                            }
+                            Ltmptrans.put(g, g);
+                            if(trans.isEmpty()){
+                                trans = g;
+                            }else{ trans+= ","+g;}
+                        }
+                    }
+                }
+            }
+            if(!this.LTransiciones.containsKey(trans) && !trans.isEmpty()){
+                String[] D = {"S"+this.LTransiciones.size(), trans};
+                String[] dd = {Tra[0],D[0],y};
+                transiciones.add(dd);
+                Ltmptransiciones.add(D);
+                if(ter){terminales.add(D[0]);}
+                this.LTransiciones.put(trans,D);
+            }else{
+                if(!trans.isEmpty()){
+                    String [] N = this.LTransiciones.get(trans);
+                    String [] dd = {Tra[0],N[0],y};
+                    transiciones.add(dd);
+                }
+            }
+        }
+        for(String[] G: Ltmptransiciones){
+            createTransition(G);
+        }
+    }
+    
+     public void GraficarTransiciones(){
+        String pathx="./Reportes/Transiciones_201700522";
+        File directorio = new File(pathx);
+        if (!directorio.exists()) {
+            directorio.mkdirs();
+        }
+        FileWriter file_dot;
+        PrintWriter writefil;
+        try
+        {
+            file_dot = new FileWriter(pathx+"/"+nameAFD+".dot");
+            writefil = new PrintWriter(file_dot);
+            writefil.println("digraph grafica{\n"
+                + "rankdir=LR;\n"
+                + "forcelabels= true;\n"
+                + "node [shape = plain];\n");
+            String td = "";
+            for(String[] y: LTransiciones.values()){
+                td+="<tr>\n";
+                td+="<td> "+y[0]+" {"+y[1]+"} </td>\n";
+                for (String x: alfabeto) {
+                    boolean encontrado = false;
+                    for(String[] dato: this.transiciones){
+                        if (dato[2].equals(x) && y[0].equals(dato[0])) {
+                            td+="<td> "+dato[1]+" </td>\n";
+                            encontrado = true;
+                            break;
+                        }
+                    }
+                    if (!encontrado) {
+                        td+="<td> -- </td>\n";
+                    }
+                }
+                td+= "</tr>\n";
+            }
+            String tabla = "<<table border = '1' cellboder = '1' cellspacing='0' cellpadding='10'>\n"
+                    + "<tr>\n"
+                    + "<td>ESTADO</td>\n";
+            for (String x: alfabeto) {
+                tabla+="<td>"+x+"</td>\n";
+            }
+            tabla += "</tr>\n"
+                    + td
+                    + "</table>>";
+            String text = "nodo"+this.aux+" [label = "+tabla+"];\n";
+            writefil.println(text);
+            writefil.println("\n}");
+            file_dot.close();
+            Runtime rt = Runtime.getRuntime();
+            rt.exec( "dot -Tjpg -o " + pathx + nameAFD+".jpg graf " + pathx + nameAFD + ".dot");
+        }catch(IOException e){
+            System.out.println("Error al graficar la tabla de transiciones");
+        }
+    }
+    
+    
+    public void GraficarAFD(){
+        String pathx="./Reportes/AFD_201700522";
         File directorio = new File(pathx);
         if (!directorio.exists()) {
             directorio.mkdirs();
@@ -144,65 +364,37 @@ public class AFD {
         PrintWriter escritor;
         try
         {
-            fichero = new FileWriter(pathx+"/"+nameAFD+".dot");
+            fichero = new FileWriter("./AFD_201903872/"+nameAFD+".dot");
             escritor = new PrintWriter(fichero);
-            escritor.print("digraph arbol{\n"
-                + "rankdir=TB;\n"
+            escritor.println("digraph grafica{\n"
+                + "rankdir=LR;\n"
                 + "forcelabels= true;\n"
-                + "node [shape = plaintext];\n");
-            escritor.print(graphArbol(this.raiz));
-            escritor.print("\n}");
+                + "node [shape = circle];\n");
+            for(int x=0; x<this.LTransiciones.size();x++){
+                if (terminales.contains("S"+x)){
+                    escritor.println("S"+x+" [label = \""+"S"+x+"\", shape = doublecircle];\n");
+                }else{
+                    escritor.println("S"+x+" [label = \""+"S"+x+"\"];\n");
+                }
+            }
+            for(String[]k: transiciones){
+                String dat = k[2];
+                if("\\n".equals(k[2])){
+                    dat = "\\\\n";
+                }
+                if(" ".equals(k[2])){
+                    dat = "\\\" \\\"";
+                }
+                escritor.println(k[0]+"->"+k[1]+"[label=\""+dat+"\"]\n");
+            }
+            escritor.println("\n}");
             fichero.close();
             Runtime rt = Runtime.getRuntime();
-            rt.exec( "dot -Tjpg -o "+pathx+"/"+nameAFD+".jpg graf "+pathx+"/"+nameAFD+".dot");
+            rt.exec( "dot -Tjpg -o "+pathx+nameAFD+".jpg graf"+pathx+nameAFD+".dot");
         }catch(IOException e){
-            System.out.println("Error al crear arbol");
-        } 
+            System.out.println("Error al crear AFD");
+        }
     }
     
-    public String graphArbol(NHoja nodo){
-        int cod = this.aux;
-        int cod2 = 0;
-        int cod3 = 0;
-        String anulable = (nodo.anulable)?"V":"F";
-        String Tablanodo = "<<table border = '0' cellboder = '1' CELLSPACIONG='0'>\n"+
-                "<tr>\n"
-                + "<td></td>\n"
-                + "<td>"+anulable+"</td>\n"
-                + "<td></td>\n"
-                + "</tr>\n"+
-                "<tr>\n"
-                + "<td>"+nodo.primeros+"</td>\n"
-                + "<td border='1'>"+nodo.valor+"</td>\n"
-                + "<td>"+nodo.ultimos+"</td>"
-                + "</tr>\n"+
-                "<tr>\n"
-                + "<td></td>\n"
-                + "<td>"+nodo.ID_nodo+"</td>\n"
-                + "<td></td>\n"
-                + "</tr>\n"
-                + "</table>>";
-        String text = "nodo"+this.aux+" [label = "+Tablanodo+"];\n";
-        this.aux++;
-        if(nodo.HojaL!=null){
-            cod2 = this.aux;
-            text+= graphArbol(nodo.HojaL);
-            this.aux++;
-        }
-        if(nodo.HojaR!=null){
-            cod3 = this.aux;
-            text+= graphArbol(nodo.HojaR);
-            this.aux++;
-        }
-        if(!"hoja".equalsIgnoreCase(nodo.tipo)){
-            if(cod2!=0){
-                text+= "nodo"+cod+"->"+"nodo"+(cod2)+"\n";
-            }
-            if(cod3!=0){
-                text+= "nodo"+cod+"->"+"nodo"+(cod3)+"\n";
-            }
-        }
-        return text;
-    }
-    
+  
 }
