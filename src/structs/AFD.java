@@ -14,7 +14,7 @@ import java.util.Map;
  * @author GustavC
  */
 public class AFD {
-    String nameAFD;
+    public String nameAFD;
     NHoja raiz;
     int id = 1;
     int aux =  1;
@@ -414,8 +414,10 @@ public class AFD {
     public boolean ValidarCadena(String cadena){
         String actual = "S0";
         boolean respuesta = false;
+        boolean existe = false;
         for(int x=0; x<cadena.length(); x++){
             respuesta = false;
+            existe = false;
             char carAct = cadena.charAt(x);
             for(String[] estado: this.transiciones){
                 if(carAct=='\\'){
@@ -434,9 +436,14 @@ public class AFD {
                 }
                 if(estado[0].equals(actual)){
                     String alfabeto = estado[2]; 
+                    
                     if(conjuntos.get(estado[2])!=null){
-                        actual = estado[1];
+                        
                         respuesta = ValidarConjunto((int)carAct, conjuntos.get(estado[2]));
+                        if (respuesta){
+                            actual = estado[1];
+                            existe=true;
+                        }
                     }
                     else{
                         char alfa = estado[2].charAt(0);
@@ -455,14 +462,12 @@ public class AFD {
                         }else{respuesta = false;}
                     }
                 }
-                if(respuesta){break;}
             }
-            if(!respuesta){break;}
         }
-        if(respuesta){
-            System.out.println("La cadena : " + cadena+" ES valida con la expresion: "+this.nameAFD);
+        if(terminales.contains(actual) && existe){
+            respuesta = true;
         }else{
-            System.out.println("La cadena : " + cadena+" NO es valida con la expresion: "+this.nameAFD);
+            respuesta = false;
         }
         return respuesta;
     }

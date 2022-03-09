@@ -10,7 +10,7 @@ import structs.*;
 parser code 
 {:
     public List<TErrores> LErrSintact = new ArrayList<TErrores>();
-    public List<String> validaciones = new ArrayList<String>();
+    public List<NValidacion> Lvalidar = new ArrayList<NValidacion>();
     public Map<String, AFD> Lexpresiones = new HashMap<>();
     public Map<String, String> LConj = new HashMap<>();
     public Map<String, String> conjunto = new HashMap<>();
@@ -67,26 +67,27 @@ conjSimb::= NUMB:a VIRGU:b conjultimo:c            {: RESULT = a+b+c;  :}
             |LETRA:a VIRGU:b conjultimo:c          {: RESULT = a+b+c;  :}
             |SIGNO:a VIRGU:b conjultimo:c          {: RESULT = a+b+c;  :}
             |CADENA:a VIRGU:b conjultimo:c         {: RESULT = a+b+c;  :}
-            |ESPECIAL:a VIRGU:b conjunltimo:c      {:RESULT = a+b+c:}
+            |ESPECIAL:a VIRGU:b conjultimo:c       {:RESULT = a+b+c;:}
             |conjUnit:a                            {: RESULT = a;:}
             ;
 
-conjultimo::= NUMB:a                {: RESULT = a;:}
+conjultimo ::= NUMB:a               {: RESULT = a;:}
             | LETRA:a               {: RESULT = a;:}
             | SIGNO:a               {: RESULT = a;:}
             | CADENA:a              {: RESULT = a;:}
-            | ESPECIAL:             {: RESULT = a;:}
+            | ESPECIAL:a            {: RESULT = a;:}
             ;
 
-conjUnit::=   NUMB:a conjUnit:b                       {: RESULT = a+b; :}
+conjUnit::=   NUMB:a conjUnit:b                     {: RESULT = a+b; :}
             | LETRA:a conjUnit:b                    {: RESULT = a+b; :}
             | SIGNO:a conjUnit:b                    {: RESULT = a+b; :}
-            | CADENA:a conjUnit:b                    {: RESULT = a+b; :}
-            | ESPECIAL:a conjUnit
+            | CADENA:a conjUnit:b                   {: RESULT = a+b; :}
+            | ESPECIAL:a conjUnit:b                 {: RESULT = a+b; :}
             | COMA:a NUMB:b conjUnit:c              {: RESULT = a+b+c; :}
             | COMA:a LETRA:b conjUnit:c             {: RESULT = a+b+c; :}
             | COMA:a SIGNO:b conjUnit:c             {: RESULT = a+b+c; :}
-            | COMA:a CADENA:b conjUnit:c          {: RESULT = a+b+c; :}
+            | COMA:a CADENA:b conjUnit:c            {: RESULT = a+b+c; :}
+            | COMA:a ESPECIAL:b conjUnit:c          {: RESULT = a+b; :}
             |                                       {: RESULT = ""; :}
             ;
 
@@ -112,6 +113,8 @@ expresA::=   CADENA:a                  {: RESULT = a.substring(1, a.length()-1);
            ;
 
 		
-bloqueEvaluar::= ID:a DDOT CADENA:b PTCOMA bloqueEvaluar    {: if(Lexpresiones.containsKey(a)){System.out.println("Si existe el lexema");}else{System.out.println("No existe el lexema");};:}
+bloqueEvaluar::= ID:a DDOT CADENA:b PTCOMA bloqueEvaluar    {: if(Lexpresiones.containsKey(a)){
+                                                               Lvalidar.add(new NValidacion(a,b.substring(1, b.length()-1))); 
+     }else{System.out.println("No existe el lexema \"" + a +"\"");};:}
 		|
 		;

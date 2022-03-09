@@ -24,16 +24,26 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.io.StringReader;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.DefaultListModel;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JList;
 import javax.swing.SwingUtilities;
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import structs.AFD;
+import structs.NValidacion;
 
 
         
@@ -44,12 +54,14 @@ public class Home extends javax.swing.JFrame {
      * Creates new form Home
      */
     String pathFile = "";
+    String[] names;
+    int cont = 0;
     RSyntaxTextArea textArea = new RSyntaxTextArea();
     RTextScrollPane scrpanel = new RTextScrollPane(textArea);
     public List<TErrores> LGlobalErroreses = new ArrayList<TErrores>();
+    public List<NValidacion> LstValidacion = new ArrayList<NValidacion>();
     public static Map<String, AFD> arboles = new HashMap<>();
-    
-    
+    DefaultListModel<String> model = new DefaultListModel<>();
         
     public Home() {
         //compilador lexico y sintactico
@@ -64,13 +76,11 @@ public class Home extends javax.swing.JFrame {
         }
         
         initComponents();
-      
         jPcode.add(scrpanel);
-         
         redirectSystemStreams(); //Capturar lo que se imprima en consola
         configTExtArea();
-         
-        
+        ShowImagenes("","");
+ 
     }
 
    
@@ -87,12 +97,15 @@ public class Home extends javax.swing.JFrame {
         jPcode = new javax.swing.JPanel();
         BtnGen_Automata = new javax.swing.JButton();
         BtnAnalisis = new javax.swing.JButton();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jPanel4 = new javax.swing.JPanel();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        JcomboGraph = new javax.swing.JComboBox<>();
+        BtnBack = new javax.swing.JButton();
+        BtnNext = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         Consola = new javax.swing.JTextArea();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        JListGraph = new javax.swing.JList<>();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        JLImagen = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -122,32 +135,35 @@ public class Home extends javax.swing.JFrame {
             }
         });
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Arboles", "Siguientes", "Transiciones", "Automatas" }));
-
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 584, Short.MAX_VALUE)
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 426, Short.MAX_VALUE)
-        );
-
-        jButton3.setText("Anterior");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        JcomboGraph.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Arboles", "Siguientes", "Transiciones", "Automatas" }));
+        JcomboGraph.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                JcomboGraphActionPerformed(evt);
             }
         });
 
-        jButton4.setText("Siguiente");
+        BtnBack.setText("Anterior");
+        BtnBack.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnBackActionPerformed(evt);
+            }
+        });
+
+        BtnNext.setText("Siguiente");
 
         Consola.setEditable(false);
         Consola.setColumns(20);
         Consola.setRows(5);
         jScrollPane2.setViewportView(Consola);
+
+        JListGraph.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                JListGraphValueChanged(evt);
+            }
+        });
+        jScrollPane1.setViewportView(JListGraph);
+
+        jScrollPane3.setViewportView(JLImagen);
 
         jMenu1.setText("Archivo");
 
@@ -190,6 +206,11 @@ public class Home extends javax.swing.JFrame {
 
         jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItem2.setText("Generar Automata");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem2);
 
         GenerateJson.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_DOWN_MASK));
@@ -214,58 +235,57 @@ public class Home extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(20, 20, 20)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPcode, javax.swing.GroupLayout.DEFAULT_SIZE, 540, Short.MAX_VALUE)
-                            .addComponent(jScrollPane2)))
+                            .addComponent(jPcode, javax.swing.GroupLayout.DEFAULT_SIZE, 531, Short.MAX_VALUE)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 531, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(35, 35, 35)
                         .addComponent(BtnGen_Automata, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(72, 72, 72)
-                        .addComponent(BtnAnalisis, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(BtnAnalisis, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(177, 177, 177)
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap())
+                        .addGap(195, 195, 195)
+                        .addComponent(JcomboGraph, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(100, 100, 100)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(BtnBack, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(126, 126, 126))))
+                        .addComponent(BtnNext, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(64, 64, 64))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 575, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPcode, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(BtnGen_Automata, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
-                            .addComponent(BtnAnalisis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addComponent(JcomboGraph, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(80, 80, 80))))
+                        .addComponent(jPcode, javax.swing.GroupLayout.PREFERRED_SIZE, 364, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(BtnGen_Automata, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
+                            .addComponent(BtnAnalisis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 449, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(12, 12, 12)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(54, 54, 54)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(BtnBack, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(BtnNext, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -314,7 +334,7 @@ public class Home extends javax.swing.JFrame {
     /*---------------------- https://billwaa.wordpress.com/2011/11/14/java-gui-console-output/ ----------------------*/
     
     private void opnFile()  throws IOException {
-        JFileChooser jfilech = new JFileChooser("D:\\Y_2022\\Primer_Semestre\\Compi1\\LAB\\Proyecto1");
+        JFileChooser jfilech = new JFileChooser("./..");
         jfilech.setFileFilter(new FileNameExtensionFilter("Archivos Expresiones .exp", "exp"));
         int open = jfilech.showDialog(null, "Open");
         if (open == JFileChooser.APPROVE_OPTION) {
@@ -375,6 +395,32 @@ public class Home extends javax.swing.JFrame {
  }
         
     
+    public void ShowImagenes(String grafica,String nombre_){  
+        String path="";
+        if(!grafica.isEmpty()){
+            switch(grafica){
+                case "Arboles":
+                    path = "./Reportes/Arboles_201700522/"+nombre_+".jpg";
+                    break;
+                case "Siguientes":
+                    path = "./Reportes/Siguientes_201700522/"+nombre_+".jpg";
+                    break;
+                case "Transiciones":
+                    path = "./Reportes/Transiciones_201700522/"+nombre_+".jpg";
+                    break;
+                case "Automatas":
+                    path = "./Reportes/AFD_201700522/"+nombre_+".jpg";
+                    break;           
+            }
+            try {
+
+                ImageIcon graph = new ImageIcon(path);
+                JLImagen.setIcon(graph);
+            } catch (Exception e) {
+            }
+        }
+    }    
+    
     private void BtnOpenFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnOpenFileActionPerformed
       
       try {
@@ -405,48 +451,25 @@ public class Home extends javax.swing.JFrame {
         
     }//GEN-LAST:event_BtnSaveFileActionPerformed
 
-   
     //GUARDAR COMO
     private void BtnSaveAsFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnSaveAsFileActionPerformed
         SaveAsFile();
     }//GEN-LAST:event_BtnSaveAsFileActionPerformed
 
     private void BtnGen_AutomataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnGen_AutomataActionPerformed
-        try {
-
-            for(AFD arbol: arboles.values()){
-                arbol.GenerarAutomatas();
-            }
-           
-            try{ Thread.sleep(300); }
-            catch(Exception e ) 
-            { 
-                System.out.println("Thread Interrupted"); 
-            }
-           
-        } catch (Exception ex) {
-            System.out.println("Error analisis de entrada");
-            //System.out.println("Causa: "+ex.getCause());
-        } 
+        GenerateAutomatas();
     }//GEN-LAST:event_BtnGen_AutomataActionPerformed
 
     private void BtnAnalisisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnAnalisisActionPerformed
-
         analizarContent(textArea.getText());
     }//GEN-LAST:event_BtnAnalisisActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void BtnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnBackActionPerformed
         // TODO add your handling code here:
-        
-      //  for(int i = 0; i<sintactico.LErrSintact.lenght;i++){
-      //      sintactico.LErrSintact.get(i);
+               
                 
-      //  }
-        
-                
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_BtnBackActionPerformed
 
-    
     //GENERAR AUTOMATA
     private void GenerateJsonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GenerateJsonActionPerformed
         // TODO add your handling code here:
@@ -456,6 +479,19 @@ public class Home extends javax.swing.JFrame {
         pathFile = "";
         textArea.setText("");
     }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void JcomboGraphActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JcomboGraphActionPerformed
+        // TODO add your handling code here:
+        ShowImagenes(JcomboGraph.getSelectedItem().toString(), JListGraph.getSelectedValue());
+    }//GEN-LAST:event_JcomboGraphActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        GenerateAutomatas();
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void JListGraphValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_JListGraphValueChanged
+        ShowImagenes(JcomboGraph.getSelectedItem().toString(), JListGraph.getSelectedValue());
+    }//GEN-LAST:event_JListGraphValueChanged
 
     /**
      * @param args the command line arguments
@@ -492,7 +528,21 @@ public class Home extends javax.swing.JFrame {
         });
     }
     
-    
+    public void GenerateAutomatas(){
+        JListGraph.setModel(model);
+        try {
+            
+            for(AFD arbol: arboles.values()){
+                arbol.GenerarAutomatas();
+                model.add(cont,arbol.nameAFD);
+            }
+            
+            ShowImagenes(JcomboGraph.getSelectedItem().toString(), JListGraph.getSelectedValue());
+             
+        } catch (Exception ex) {
+            System.out.println("Error analisis de entrada");
+        } 
+    }
     
     public void analizarContent(String texto){
         
@@ -501,38 +551,88 @@ public class Home extends javax.swing.JFrame {
             sintactico sintact_ = new sintactico(nlex);
             sintact_.parse();
             arboles.putAll(sintact_.Lexpresiones);
+            
             System.out.println("No. de Arboles "+arboles.size());
+            
             LGlobalErroreses.addAll(nlex.LError);
             LGlobalErroreses.addAll(sintact_.LErrSintact);
-            System.out.println("Tamaño lista Errores Lista Global "+ LGlobalErroreses.size());
+            LstValidacion.addAll(sintact_.Lvalidar);
+            for(NValidacion nodo: LstValidacion){
+                if(arboles.containsKey(nodo.nameAFD)){
+                    if(arboles.get(nodo.nameAFD).ValidarCadena(nodo.cadena)){
+                        System.out.println("La cadena : " + nodo.cadena +" ES valida con la Expresion Reg: "+ nodo.nameAFD);
+                        nodo.salida = "Cadena Valida";
+                    }else{
+                        System.out.println("La cadena : " + nodo.cadena +" NO es valida con la Expresion Reg: "+ nodo.nameAFD);
+                        nodo.salida = "Cadena Invalida";
+                    }
+                     crearJson();
+                }else{
+                    System.out.println("No existe ninguna Expresion Regular con este Nombre " + nodo.nameAFD);
+                }
+            }
+           // System.out.println("Tamaño lista Errores Lista Global "+ LGlobalErroreses.size());
         } catch (Exception e) {
-            System.err.println(e);
-            //System.out.println("");
+            System.out.println("");
         }
         
+    
         
+   
+    }
+    
+    public void crearJson(){
+        String path = "./Reportes/Salidas_201700522/";
+        DateTimeFormatter dtf5 = DateTimeFormatter.ofPattern("yyyyMMddhhmm");
+        String nameFile = "Salida" + dtf5.format(LocalDateTime.now());
+        File directorio = new File(path);
+        if (!directorio.exists()) {
+            directorio.mkdirs();
+        }
+        FileWriter file_json;
+        PrintWriter writefil;
+       try {
+           
+            file_json= new FileWriter(path+nameFile+".json");
+            writefil = new PrintWriter(file_json);
+            JSONArray list = new JSONArray();
+            for(NValidacion n: LstValidacion){
+            JSONObject obj = new JSONObject();
+            obj.put("Valor", n.cadena);
+            obj.put("ExpresionRegular", n.nameAFD);
+            obj.put("Resultado", n.salida);
+            list.add(obj);
+            }
+            writefil.print(list.toJSONString());
+            file_json.close();
+        } catch (IOException e) {
+           System.out.println("nel no deja v,:");
+        }
         
         
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BtnAnalisis;
+    private javax.swing.JButton BtnBack;
     private javax.swing.JButton BtnGen_Automata;
+    private javax.swing.JButton BtnNext;
     private javax.swing.JMenuItem BtnOpenFile;
     private javax.swing.JMenuItem BtnSaveAsFile;
     private javax.swing.JMenuItem BtnSaveFile;
     private javax.swing.JTextArea Consola;
     private javax.swing.JMenuItem GenerateJson;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JLabel JLImagen;
+    private javax.swing.JList<String> JListGraph;
+    private javax.swing.JComboBox<String> JcomboGraph;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPcode;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     // End of variables declaration//GEN-END:variables
 }

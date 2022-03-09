@@ -34,9 +34,9 @@ BLANCOS=[ \r\t]+
 NUMERO = [0-9]+
 LETRA = [A-Za-zÑñ]
 SIGNO = [\!-\/\:-\@\[-\`%\{-\}]
-ESPECIAL = (\\\")|(\\n)|(\\\')
+ESPECIAL = \\\"|\\\'|\\\n
 IDENT = [A-Za-zÑñ]([A-Za-zÑñ]|[0-9]|_)*
-CADENA = [\"](((ESPECIAL)|[^\\\"\n])*[\"]
+CADENA = [\"]((\\\"|\\\'|\\\n)|[^\\\"\n])*[\"]
 
 
 %% 
@@ -60,11 +60,11 @@ CADENA = [\"](((ESPECIAL)|[^\\\"\n])*[\"]
 
 
  {NUMERO} {/*System.out.println("Lexico "+yytext()+" NUMERO");*/ return new Symbol(sym.NUMB,yycolumn,yyline, yytext());}
- {SIGNO} {/*System.out.println("Lexico "+yytext()+" SIGNO");*/ return new Symbol(sym.SIGNO,yycolumn,yyline, yytext());}
  {LETRA} {/*System.out.println("Lexico "+yytext()+" LETRA");*/ return new Symbol(sym.LETRA,yycolumn,yyline, yytext());}
- 
  {IDENT} {/*System.out.println("Lexico "+yytext()+" ID");*/ return new Symbol(sym.ID,yycolumn,yyline, yytext());}
+ {SIGNO} {/*System.out.println("Lexico "+yytext()+" SIGNO");*/ return new Symbol(sym.SIGNO,yycolumn,yyline, yytext());}
  {CADENA} {/*System.out.println("Lexico "+yytext()+" CADENA");*/ return new Symbol(sym.CADENA,yycolumn,yyline, yytext());}
+
 {BLANCOS} {}
 {SALTOLINEA} {}
 {ESPECIAL} {/*System.out.println("Lexico "+yytext()+" ESPE");*/ return new Symbol(sym.ESPECIAL,yycolumn,yyline, yytext());}
