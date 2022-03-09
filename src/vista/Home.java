@@ -26,6 +26,9 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -94,6 +97,7 @@ public class Home extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jMenuItem3 = new javax.swing.JMenuItem();
         jPcode = new javax.swing.JPanel();
         BtnGen_Automata = new javax.swing.JButton();
         BtnAnalisis = new javax.swing.JButton();
@@ -115,6 +119,11 @@ public class Home extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jMenuItem2 = new javax.swing.JMenuItem();
         GenerateJson = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        itemJSON = new javax.swing.JMenuItem();
+        itemErrores = new javax.swing.JMenuItem();
+
+        jMenuItem3.setText("jMenuItem3");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -150,6 +159,11 @@ public class Home extends javax.swing.JFrame {
         });
 
         BtnNext.setText("Siguiente");
+        BtnNext.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnNextActionPerformed(evt);
+            }
+        });
 
         Consola.setEditable(false);
         Consola.setColumns(20);
@@ -223,6 +237,28 @@ public class Home extends javax.swing.JFrame {
         jMenu1.add(GenerateJson);
 
         jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("Reportes");
+
+        itemJSON.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_J, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        itemJSON.setText("JSON");
+        itemJSON.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemJSONActionPerformed(evt);
+            }
+        });
+        jMenu2.add(itemJSON);
+
+        itemErrores.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        itemErrores.setText("Errores");
+        itemErrores.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemErroresActionPerformed(evt);
+            }
+        });
+        jMenu2.add(itemErrores);
+
+        jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
 
@@ -465,7 +501,9 @@ public class Home extends javax.swing.JFrame {
     }//GEN-LAST:event_BtnAnalisisActionPerformed
 
     private void BtnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnBackActionPerformed
-        // TODO add your handling code here:
+        if(JListGraph.getSelectedIndex()!=0){
+            JListGraph.setSelectedIndex(JListGraph.getSelectedIndex()-1);
+        }
                
                 
     }//GEN-LAST:event_BtnBackActionPerformed
@@ -492,6 +530,34 @@ public class Home extends javax.swing.JFrame {
     private void JListGraphValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_JListGraphValueChanged
         ShowImagenes(JcomboGraph.getSelectedItem().toString(), JListGraph.getSelectedValue());
     }//GEN-LAST:event_JListGraphValueChanged
+
+    private void itemJSONActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemJSONActionPerformed
+        FileSystem fs = FileSystems.getDefault();//Creamos un File System para poder manejar ficheros
+        Path pathfil=fs.getPath("./Reportes/Salidas_201700522/");
+        try {
+            Process p = new ProcessBuilder("explorer.exe","/select,"+pathfil.toAbsolutePath()).start();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_itemJSONActionPerformed
+
+    private void BtnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnNextActionPerformed
+       if(JListGraph.getSelectedIndex()!=(JListGraph.getModel().getSize()-1)){
+            JListGraph.setSelectedIndex(JListGraph.getSelectedIndex()+1);
+        }
+    }//GEN-LAST:event_BtnNextActionPerformed
+
+    private void itemErroresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemErroresActionPerformed
+        FileSystem fs = FileSystems.getDefault();//Creamos un File System para poder manejar ficheros
+        Path pathfil=fs.getPath("./Reportes/Errores_201700522/");
+        try {
+            Process p = new ProcessBuilder("explorer.exe","/select,"+pathfil.toAbsolutePath()).start();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_itemErroresActionPerformed
 
     /**
      * @param args the command line arguments
@@ -532,11 +598,11 @@ public class Home extends javax.swing.JFrame {
         JListGraph.setModel(model);
         try {
             
-            for(AFD arbol: arboles.values()){
+            for(AFD arbol: arboles.values()){//recorrer la lista de arboles
                 arbol.GenerarAutomatas();
                 model.add(cont,arbol.nameAFD);
             }
-            
+            JListGraph.setSelectedIndex(0);
             ShowImagenes(JcomboGraph.getSelectedItem().toString(), JListGraph.getSelectedValue());
              
         } catch (Exception ex) {
@@ -552,8 +618,7 @@ public class Home extends javax.swing.JFrame {
             sintact_.parse();
             arboles.putAll(sintact_.Lexpresiones);
             
-            System.out.println("No. de Arboles "+arboles.size());
-            
+            //System.out.println("No. de Arboles "+arboles.size());
             LGlobalErroreses.addAll(nlex.LError);
             LGlobalErroreses.addAll(sintact_.LErrSintact);
             LstValidacion.addAll(sintact_.Lvalidar);
@@ -566,10 +631,14 @@ public class Home extends javax.swing.JFrame {
                         System.out.println("La cadena : " + nodo.cadena +" NO es valida con la Expresion Reg: "+ nodo.nameAFD);
                         nodo.salida = "Cadena Invalida";
                     }
-                     crearJson();
+                     
                 }else{
                     System.out.println("No existe ninguna Expresion Regular con este Nombre " + nodo.nameAFD);
                 }
+            }
+            crearJson();
+            if(LGlobalErroreses.size()!=0){
+                ReporteErrores();
             }
            // System.out.println("Tamaño lista Errores Lista Global "+ LGlobalErroreses.size());
         } catch (Exception e) {
@@ -605,6 +674,7 @@ public class Home extends javax.swing.JFrame {
             }
             writefil.print(list.toJSONString());
             file_json.close();
+            System.out.println("JSON Creado Exitosamente");
         } catch (IOException e) {
            System.out.println("nel no deja v,:");
         }
@@ -612,6 +682,63 @@ public class Home extends javax.swing.JFrame {
         
     }
 
+    public void ReporteErrores(){
+        int cont = 1;
+        String path = "./Reportes/Errores_201700522/";
+        DateTimeFormatter dtf5 = DateTimeFormatter.ofPattern("yyyyMMddhhmm");
+        String nameFile = "errores" + dtf5.format(LocalDateTime.now());
+        File directorio = new File(path);
+        if (!directorio.exists()) {
+            directorio.mkdirs();
+        }
+        FileWriter file_html;
+        PrintWriter writefil;
+       try {
+           
+            file_html= new FileWriter(path+nameFile+".html");
+            writefil = new PrintWriter(file_html);
+            writefil.print("<html>\n" +
+                            "<head>\n" +
+                            "    <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\" integrity=\"sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3\" crossorigin=\"anonymous\">\n" +
+                            "    <title>Reporte de Errores</title>\n" +
+                            "</head>\n" +
+                            "<body style=\"text-align:center\">\n" +
+                            "    <h1>Reporte de Errores</h1>\n" +
+                            "    <table class=\"table table-dark table-striped\" style=\"text-align:center\">\n" +
+                            "        <thead>\n" +
+                            "            <tr>\n" +
+                            "              <th scope=\"col\">#</th>\n" +
+                            "              <th scope=\"col\">Lexema</th>\n" +
+                            "              <th scope=\"col\">Tipo</th>\n" +
+                            "              <th scope=\"col\">Linea</th>\n" +
+                            "              <th scope=\"col\">Columna</th>\n" +
+                            "              <th scope=\"col\">Descripcion</th>\n" +
+                            "            </tr>\n" +
+                            "          </thead>\n" +
+                            "          <tbody>");
+            for(TErrores E: LGlobalErroreses){
+                writefil.print( "          <tr>\n"+
+                                "              <th scope=\"row\">"+cont+"</th>\n"+
+                                "              <th>"+E.lexema+"</th>\n"+
+                                "              <th>"+E.tipo+"</th>\n"+
+                                "              <th>"+E.line+"</th>\n"+
+                                "              <th>"+E.col+"</th>\n"+
+                                "              <th>"+E.descript+"</th>\n"+
+                                "          </tr>\n");
+                cont++;
+            }
+            writefil.print( "          </tbody>\n" +
+                            "      </table>\n" +
+                            "</body>\n" +
+                            "<script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js\" integrity=\"sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p\" crossorigin=\"anonymous\"></script>\n" +
+                            "</html>");
+            file_html.close();
+            System.out.println("Reporte de Errores Generado");
+        } catch (IOException e) {
+           System.out.println("");
+        }
+        
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BtnAnalisis;
     private javax.swing.JButton BtnBack;
@@ -625,10 +752,14 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JLabel JLImagen;
     private javax.swing.JList<String> JListGraph;
     private javax.swing.JComboBox<String> JcomboGraph;
+    private javax.swing.JMenuItem itemErrores;
+    private javax.swing.JMenuItem itemJSON;
     private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JPanel jPcode;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
