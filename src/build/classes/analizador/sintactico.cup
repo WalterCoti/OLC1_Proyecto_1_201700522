@@ -1,0 +1,120 @@
+package analizador;
+import java_cup.runtime.*;
+import structs.TErrores;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import structs.*;
+
+parser code 
+{:
+    public List<TErrores> LErrSintact = new ArrayList<TErrores>();
+    public List<NValidacion> Lvalidar = new ArrayList<NValidacion>();
+    public Map<String, AFD> Lexpresiones = new HashMap<>();
+    public Map<String, String> LConj = new HashMap<>();
+    public Map<String, String> conjunto = new HashMap<>();
+    
+  
+    
+    /* metodo error sintactico, se puede recuperar. */ 
+        public void syntax_error(Symbol s){ 
+        String lexema = s.value.toString(); 
+        int line = s.right;
+        int col = s.left;
+        System.out.println("Error Sintactico: "+lexema+" linea: "+ line + " columna " + col);
+        TErrores nwLErrRec = new TErrores(lexema,line,col,"Error Sintactico","Error sintactico recuperado \"" + lexema+"\" en la linea "+s.right+" y columna "+s.left );
+        LErrSintact.add(nwLErrRec);
+    } 
+
+    /* metodo al que se llama ante algun error sintactico  no es posible una recuperación de errores. */
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
+        String lexema = s.value.toString(); 
+        int line = s.right;
+        int col = s.left;
+        TErrores nwLErrIr = new TErrores(lexema,line,col,"Error Sintactico Irrecuperable","Error sintactico\"" + lexema+"\" en la linea "+line+" y columna "+col );
+        LErrSintact.add(nwLErrIr);
+    }  
+:} 
+
+terminal String CONJ,SEPA,ASIGN,PTCOMA,DDOT,DOT,COMA,LLAVEL,LLAVER,DISYUN,SINTER,MAS,POR,VIRGU;
+terminal String NUMB,SIGNO,LETRA,ESPECIAL,ID,CADENA;
+non terminal String inicio,bloqueGlobal,bloqueDef,bloqueEvaluar,conjultimo;
+non terminal String expRegulares,conjSimb,defConj,conjUnit,expresA;
+non terminal NHoja expresiones;
+
+//precedence left MAS,POR,DOT,SINTER,DISYUN;
+
+start with inicio; 
+
+
+inicio::=bloqueGlobal;
+
+bloqueGlobal::= LLAVEL bloqueDef SEPA SEPA bloqueEvaluar LLAVER bloqueGlobal
+		|
+		;
+bloqueDef::= defConj expRegulares;
+
+defConj::=  CONJ DDOT ID:a ASIGN conjSimb:b PTCOMA defConj  {:  if(LConj.containsKey(a)){
+                                                                    System.out.println("Error el conjunto: >" + a + "< ya existe, intente cambiar el nombre"); 
+                                                                }else{
+                                                                    LConj.put(a,b);
+                                                                    System.out.println("Conjunto: > " + a + " < guardado");
+                                                                };:}
+            |
+            ;
+conjSimb::= NUMB:a VIRGU:b conjultimo:c            {: RESULT = a+b+c;  :}
+            |LETRA:a VIRGU:b conjultimo:c          {: RESULT = a+b+c;  :}
+            |SIGNO:a VIRGU:b conjultimo:c          {: RESULT = a+b+c;  :}
+            |CADENA:a VIRGU:b conjultimo:c         {: RESULT = a+b+c;  :}
+            |ESPECIAL:a VIRGU:b conjultimo:c       {:RESULT = a+b+c;:}
+            |conjUnit:a                            {: RESULT = a;:}
+            ;
+
+conjultimo ::= NUMB:a               {: RESULT = a;:}
+            | LETRA:a               {: RESULT = a;:}
+            | SIGNO:a               {: RESULT = a;:}
+            | CADENA:a              {: RESULT = a;:}
+            | ESPECIAL:a            {: RESULT = a;:}
+            ;
+
+conjUnit::=   NUMB:a conjUnit:b                     {: RESULT = a+b; :}
+            | LETRA:a conjUnit:b                    {: RESULT = a+b; :}
+            | SIGNO:a conjUnit:b                    {: RESULT = a+b; :}
+            | CADENA:a conjUnit:b                   {: RESULT = a+b; :}
+            | ESPECIAL:a conjUnit:b                 {: RESULT = a+b; :}
+            | COMA:a NUMB:b conjUnit:c              {: RESULT = a+b+c; :}
+            | COMA:a LETRA:b conjUnit:c             {: RESULT = a+b+c; :}
+            | COMA:a SIGNO:b conjUnit:c             {: RESULT = a+b+c; :}
+            | COMA:a CADENA:b conjUnit:c            {: RESULT = a+b+c; :}
+            | COMA:a ESPECIAL:b conjUnit:c          {: RESULT = a+b; :}
+            |                                       {: RESULT = ""; :}
+            ;
+
+                                           
+expRegulares ::= ID:a ASIGN expresiones:b PTCOMA expRegulares {: if(!Lexpresiones.containsKey(a)){
+                                                                    Lexpresiones.put(a,new AFD(a,conjunto,new NHoja(".",".",b,new NHoja("#","h",null,null))));
+                                                                }else{System.out.println("El id : "+ a +" para el lexema ya existe intente cambiar de nombre");};     ; :}
+		|                                           {: RESULT = null; :}         
+		;
+           
+expresiones::=  DOT:a  expresiones:b expresiones:c     {: RESULT = new NHoja(a,a,b,c);:}
+              | DISYUN:a  expresiones:b expresiones:c  {: RESULT = new NHoja(a,a,b,c); :}
+              | POR:a expresiones:b                    {: RESULT = new NHoja(a,a,b,null); :}
+              | MAS:a expresiones:b                    {: RESULT = new NHoja(a,a,b,null); :}   
+              | SINTER:a expresiones:b                 {: RESULT = new NHoja(a,a,b,null); :} 
+              | expresA:a                              {: RESULT = new NHoja(a,"h",null,null);:}
+              ;
+
+
+expresA::=   CADENA:a                  {: RESULT = a.substring(1, a.length()-1);:} 
+           | ESPECIAL:a                {: RESULT = a.substring(1, a.length()-1);:}                   
+           | LLAVEL:a ID:b LLAVER:c    {: RESULT =b; if(LConj.containsKey(b)){conjunto.put(b,LConj.get(b));}else{System.out.println("El  conjunto >" +b +"< no existe");}:}
+           ;
+
+		
+bloqueEvaluar::= ID:a DDOT CADENA:b PTCOMA bloqueEvaluar    {: if(Lexpresiones.containsKey(a)){
+                                                               Lvalidar.add(new NValidacion(a,b.substring(1, b.length()-1))); 
+     }else{System.out.println("No existe el lexema \"" + a +"\"");};:}
+		|
+		;
