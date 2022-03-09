@@ -1,0 +1,54 @@
+INICIO = BLOQUEGLOBAL
+
+BLOQUEGLOBAL = llaveL BLOQUEDEFINICIONES separador separador BLOQUEEVALUAR llaveR BLOQUEGLOBAL
+				|
+
+BLOQUEDEFINICIONES = DEFCONJUNTOS EXPRESIONES_REGULARES
+
+DEFCONJUNTOS = conj dpuntos id asignacion CONJ_SIMBOLOS ptcoma DEFCONJUNTOS
+				|
+				
+
+CONJ_SIMBOLOS = numero separador CONJUNTO_SIGUIENTE
+			|	letra separador CONJUNTO_SIGUIENTE
+			|	signo separador CONJUNTO_SIGUIENTE
+			|	cadena separador CONJUNTO_SIGUIENTE
+			|	especial separador CONJUNTO_SIGUIENTE
+			|	CONJUNTO_UNITARIO
+			
+CONJUNTO_SIGUIENTE = numero
+				|	letra
+				| 	signo
+				|	cadena
+				|	especial
+
+CONJUNTO_UNITARIO =	numero CONJUNTO_UNITARIO
+				|	letra CONJUNTO_UNITARIO
+				|	signo CONJUNTO_UNITARIO
+				|	cadena CONJUNTO_UNITARIO
+				|	especial CONJUNTO_UNITARIO
+				|	coma numero CONJUNTO_UNITARIO
+				|	coma letra CONJUNTO_UNITARIO
+				|	coma signo CONJUNTO_UNITARIO
+				|	coma cadena CONJUNTO_UNITARIO
+				|	coma especial CONJUNTO_UNITARIO
+				|
+				
+EXPRESIONES_REGULARES = id asignacion EXPRESIONES ptcoma EXPRESIONES_REGULARES
+						|
+                        
+
+EXPRESIONES = 	punto EXPRESIONES EXPRESIONES
+			|	disyuncion EXPRESIONES EXPRESIONES
+			|	por EXPRESIONES
+			|	mas	EXPRESIONES
+			|	interrogacion 	EXPRESIONES
+			|	EXPRESIONMIN
+			
+EXPRESIONMIN = 	cadena
+			|	especial
+			|	llaveL id llaveR
+
+
+BLOQUEEVALUAR = id dpuntos cadena ptcoma 	BLOQUEEVALUAR
+			|
